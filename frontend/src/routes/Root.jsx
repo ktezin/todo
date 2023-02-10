@@ -1,14 +1,21 @@
 import React from "react";
 import { Link, Outlet } from "react-router-dom";
 import styled from "styled-components";
+import GlobalStyle from "../globalStyles";
 
 const Sidebar = styled.div`
+	top: 0;
 	left: 0;
 	width: 15rem;
 	height: 100vh;
 	position: absolute;
 	overflow-x: hidden;
-	border-right: 1px solid grey;
+	border-right: 1px solid lightgrey;
+	box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
+	background-color: white;
+	@media (max-width: 1024px) {
+		display: none;
+	}
 `;
 
 const SidebarWrapper = styled.div`
@@ -44,35 +51,44 @@ const ItemWrapper = styled.div`
 	alignitems: center;
 `;
 
-export const Children = styled.div`
+const Children = styled.div`
 	width: 100%;
 	height: 100%;
 	margin-left: 15rem;
-	@media (max-width: 468px) {
+	@media (max-width: 1024px) {
 		margin-left: 5rem;
 	}
+	@media (max-width: 768px) {
+		margin-left: 0;
+	}
+`;
+
+const CustomLink = styled(Link)`
+	text-decoration: none;
+	color: inherit;
 `;
 
 const Root = () => {
 	return (
 		<div>
+			<GlobalStyle />
 			<Sidebar>
 				<SidebarWrapper>
 					<ItemsList>
 						<ItemContainer>
-							<Link to="/">
+							<CustomLink to="/">
 								<ItemWrapper>Homepage</ItemWrapper>
-							</Link>
+							</CustomLink>
 						</ItemContainer>
 						<ItemContainer>
-							<Link to="/boards">
+							<CustomLink to="/boards">
 								<ItemWrapper>Boards</ItemWrapper>
-							</Link>
+							</CustomLink>
 						</ItemContainer>
 						<ItemContainer>
-							<Link to="/logout">
+							<CustomLink to="/logout">
 								<ItemWrapper>Logout</ItemWrapper>
-							</Link>
+							</CustomLink>
 						</ItemContainer>
 					</ItemsList>
 				</SidebarWrapper>

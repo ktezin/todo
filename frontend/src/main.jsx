@@ -4,18 +4,22 @@ import Root from "./routes/Root";
 import Login from "./routes/Login";
 import Boards from "./routes/Boards";
 import Board from "./routes/Board";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 
 const router = createBrowserRouter([
 	{
 		path: "/",
 		element: <Root />,
 		children: [
-      {
+			{
+				path: "/",
+				element: <Navigate to="/boards"/>,
+			},
+			{
 				path: "/boards",
 				element: <Boards />,
 			},
-      {
+			{
 				path: "/boards/:boardId",
 				element: <Board />,
 			},
