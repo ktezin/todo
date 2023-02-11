@@ -13,21 +13,32 @@ const HeaderText = styled.h2`
 `;
 
 const Cards = styled.div`
-	display: flex;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	margin-left: 1rem;
+	margin-right: 1rem;
+	gap: 2rem;
 	align-items: center;
+	@media (max-width: 1440px) {
+		grid-template-columns: repeat(2, 1fr);
+	}
+	@media (max-width: 1024px) {
+		grid-template-columns: repeat(2, 1fr);
+	}
 `;
 
 const Card = styled(Link)`
 	background-color: white;
 	border-radius: 0.5rem;
 	height: 200px;
-	width: 200px;
-	margin: 1rem;
+	width: 100%;
 	text-align: center;
 	text-decoration: none;
-	box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+	box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+		rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
 	&:hover {
-		box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+		box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px,
+			rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
 	}
 `;
 
