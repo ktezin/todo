@@ -4,7 +4,7 @@ import styled from "styled-components";
 import GlobalStyle from "../globalStyles";
 import { TbHome, TbLayoutDashboard, TbLogout } from "react-icons/tb";
 
-const Sidebar = styled.div`
+const AppBar = styled.div`
 	top: 0;
 	left: 0;
 	width: 15rem;
@@ -18,28 +18,35 @@ const Sidebar = styled.div`
 		width: 5rem;
 	}
 	@media (max-width: 768px) {
-		display: none;
+		width: 100vw;
+		height: 4rem;
 	}
 `;
 
-const SidebarWrapper = styled.div`
+const AppBarWrapper = styled.div`
 	display: flex;
-	flexdirection: column;
-	justifycontent: center;
-	alignitems: center;
+	flex-direction: column;
 	width: 100%;
 	height: 100%;
+	@media (max-width: 768px) {
+		justify-content: center;
+		align-items: center;
+	}
 `;
 
 export const ItemsList = styled.ul`
 	display: flex;
 	align-items: center;
-	justify-contents: center;
 	flex-direction: column;
 	list-style: none;
 	width: 100%;
 	@media (max-width: 1024px) {
 		padding: 0.2rem;
+	}
+	@media (max-width: 768px) {
+		padding: 0;
+		flex-direction: row;
+		justify-content: center;
 	}
 `;
 
@@ -54,6 +61,10 @@ export const ItemContainer = styled.li`
 	}
 	&.active {
 		background-color: #dbe4f3;
+	}
+	@media (max-width: 768px) {
+		width: auto;
+		margin-top: 0;
 	}
 `;
 
@@ -89,6 +100,7 @@ const Children = styled.div`
 	}
 	@media (max-width: 768px) {
 		padding-left: 0;
+		padding-top: 4rem;
 	}
 `;
 
@@ -96,8 +108,8 @@ const Root = () => {
 	return (
 		<div>
 			<GlobalStyle />
-			<Sidebar>
-				<SidebarWrapper>
+			<AppBar>
+				<AppBarWrapper>
 					<ItemsList>
 						<ItemContainer>
 							<ItemWrapper to="/">
@@ -118,8 +130,8 @@ const Root = () => {
 							</ItemWrapper>
 						</ItemContainer>
 					</ItemsList>
-				</SidebarWrapper>
-			</Sidebar>
+				</AppBarWrapper>
+			</AppBar>
 
 			<Children>
 				<Outlet />
