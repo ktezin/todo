@@ -1,8 +1,10 @@
 import React from "react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import GlobalStyle from "../globalStyles";
 import { TbHome, TbLayoutDashboard, TbLogout } from "react-icons/tb";
+import { ModalProvider } from "styled-react-modal";
+import { AnimatePresence, motion } from "framer-motion";
 
 const AppBar = styled.div`
 	top: 0;
@@ -104,38 +106,57 @@ const Children = styled.div`
 	}
 `;
 
+const animationConfiguration = {
+	initial: { opacity: 0 },
+	animate: { opacity: 1 },
+	exit: { opacity: 0 },
+};
+
 const Root = () => {
+	const location = useLocation();
 	return (
 		<div>
-			<GlobalStyle />
-			<AppBar>
-				<AppBarWrapper>
-					<ItemsList>
-						<ItemContainer>
-							<ItemWrapper to="/">
-								<TbHome />
-								<ItemText>Homepage</ItemText>
-							</ItemWrapper>
-						</ItemContainer>
-						<ItemContainer>
-							<ItemWrapper to="/boards">
-								<TbLayoutDashboard />
-								<ItemText>Boards</ItemText>
-							</ItemWrapper>
-						</ItemContainer>
-						<ItemContainer>
-							<ItemWrapper to="/logout">
-								<TbLogout />
-								<ItemText>Logout</ItemText>
-							</ItemWrapper>
-						</ItemContainer>
-					</ItemsList>
-				</AppBarWrapper>
-			</AppBar>
+			<ModalProvider>
+				<GlobalStyle />
+				<AppBar>
+					<AppBarWrapper>
+						<ItemsList>
+							<ItemContainer>
+								<ItemWrapper to="/">
+									<TbHome />
+									<ItemText>Homepage</ItemText>
+								</ItemWrapper>
+							</ItemContainer>
+							<ItemContainer>
+								<ItemWrapper to="/boards">
+									<TbLayoutDashboard />
+									<ItemText>Boards</ItemText>
+								</ItemWrapper>
+							</ItemContainer>
+							<ItemContainer>
+								<ItemWrapper to="/logout">
+									<TbLogout />
+									<ItemText>Logout</ItemText>
+								</ItemWrapper>
+							</ItemContainer>
+						</ItemsList>
+					</AppBarWrapper>
+				</AppBar>
 
-			<Children>
-				<Outlet />
-			</Children>
+				<AnimatePresence key={location.pathname}>
+					<motion.div
+						variants={animationConfiguration}
+						initial="initial"
+						animate="animate"
+						exit="exit"
+						transition={{ duration: 0.4 }}
+					>
+						<Children>
+							<Outlet />
+						</Children>
+					</motion.div>
+				</AnimatePresence>
+			</ModalProvider>
 		</div>
 	);
 };

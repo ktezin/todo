@@ -28,11 +28,15 @@ const Cards = styled.div`
 `;
 
 const Card = styled(Link)`
-	background-color: white;
+	background-color: black;
+	background-image: url("${(props) => props.image};");
+	color: white;
 	border-radius: 0.5rem;
 	height: 200px;
 	width: 100%;
 	text-align: center;
+	font-weight: 500;
+	font-size: 2rem;
 	text-decoration: none;
 	box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
 		rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
@@ -42,19 +46,23 @@ const Card = styled(Link)`
 	}
 `;
 
-const Board = () => {
+const Boards = () => {
 	return (
 		<Container>
 			<HeaderText>Boards</HeaderText>
 			<Cards>
-				<Card to="/boards/test">Test Board</Card>
-				<Card to="/boards/test">Test Board 2</Card>
-				<Card to="/boards/test">Test Board 3</Card>
-				<Card to="/boards/test">Test Board 4</Card>
-				<Card to="/boards/test">Test Board 5</Card>
+				{[0, 1, 2, 3, 4].map((value, index) => (
+					<Card
+						to="/boards/test"
+						image={"https://source.unsplash.com/random"}
+						key={index}
+					>
+						Test Board {value}
+					</Card>
+				))}
 			</Cards>
 		</Container>
 	);
 };
 
-export default Board;
+export default Boards;

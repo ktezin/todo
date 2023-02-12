@@ -1,5 +1,10 @@
 import React from "react";
 import styled from "styled-components";
+import { VscDebugStart } from "react-icons/vsc";
+import { MdDoneOutline, MdRemoveCircleOutline } from "react-icons/md";
+import { BiUpvote, BiDownvote } from "react-icons/bi";
+import { AiOutlineFileAdd } from "react-icons/ai";
+import Modal from "styled-react-modal";
 
 const Container = styled.div``;
 
@@ -93,17 +98,22 @@ const Card = styled.div`
 	border-left: 0.8rem solid ${(props) => props.color};
 	spacing: 1rem;
 	margin-bottom: 0.7rem;
-	padding-left: 0.8rem;
 	&:hover {
 		cursor: pointer;
 		background-color: #E5E4E2;
 		box-shadow: rgba(0, 0, 0, 0.15) 0px 15px 25px, rgba(0, 0, 0, 0.05) 0px 5px 10px;
 	}
+	animation: fadeIn;
+	animation-duration: 1s;
 `;
 
 const CardContent = styled.div`
 	display: flex;
 	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	width: 100%;
 `;
 
 const CardText = styled.p`
@@ -118,7 +128,8 @@ const CardOwner = styled.p`
 	color: grey;
 `;
 
-const CardTimeText = styled.p`
+const CardTimeText = styled.span`
+	display: block;
 	font-weight: 300;
 	margin: 0;
 `;
@@ -128,19 +139,19 @@ const CardActions = styled.div`
 	justify-content: center;
 	align-items: center;
 	height: 100%;
-	background-color: #0095ff;
 	border-top-right-radius: 0.8rem;
 	border-bottom-right-radius: 0.8rem;
 `;
 
 const CardButton = styled.button`
-	background-color: white;
+	background-color: inherit;
 	border-radius: 0.8rem;
 	border: none;
 	padding: 0.8rem;
-	background-color: #0095ff;
 	&:hover {
-		background-color: #07c;
+		color: #07c;
+		animation: flash;
+		animation-duration: 1s;
 	}
 `;
 
@@ -162,15 +173,82 @@ const AddCard = styled.div`
 	border-radius: 0.6rem;
 	spacing: 1rem;
 	margin-bottom: 0.7rem;
-	padding-left: 0.8rem;
+	padding: 0.8rem;
 	&:hover {
 		cursor: pointer;
 		background-color: #E5E4E2;
 		box-shadow: rgba(0, 0, 0, 0.15) 0px 15px 25px, rgba(0, 0, 0, 0.05) 0px 5px 10px;
 	}
+	animation: bounce;
+	animation-duration: 1s;
+`;
+
+const StyledModal = Modal.styled`
+	display: "flex";
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	min-width: 20rem;
+	max-width: 26rem;
+	min-height: 20rem;
+ 	background-color: white;
+ 	box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+ 	border-radius: 0.5rem;
+	padding: 1rem;
+	font-size: 1.2rem;
+	font-weight: 500;
+	animation: fadeInDown;
+	animation-duration: 0.3s;
+`;
+
+const ModalText = styled.h2`
+	text-align: center;
+`;
+
+const Input = styled.input`
+	display: "flex";
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	width: ${(props) => props.fullWidth && "100%"};
+	height: 2.2rem;
+	background-color: white;
+	box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+	border-radius: 0.2rem;
+	border: none;
+	padding: 0.2rem;
+	margin: 0.2rem;
+`;
+
+const Button = styled.button`
+	width: ${(props) => props.fullWidth && "100%"};
+	background-color: #00b9e8;
+	border-radius: 0.2rem;
+	border: 1px;
+	padding: 0.8rem;
+	margin-top: auto;
+	font-weight: 500;
+	font-size: 1rem;
+	box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 5px 0px,
+		rgba(0, 0, 0, 0.1) 0px 0px 1px 0px;
+	&:hover {
+		color: black;
+		background-color: #72a0c1;
+	}
 `;
 
 const Board = () => {
+	const [isOpen, setIsOpen] = React.useState(false);
+	const [isCardOpen, setIsCardOpen] = React.useState(false);
+
+	function toggleModal(e) {
+		setIsOpen(!isOpen);
+	}
+
+	function toggleCardModal(e) {
+		setIsCardOpen(!isCardOpen);
+	}
+
 	return (
 		<Container>
 			<Header>
@@ -186,46 +264,62 @@ const Board = () => {
 				<List>
 					<ListText>Brainstorm</ListText>
 					<Card color="#9966CC">
+						<CardContent onClick={toggleCardModal}>
+							<CardText>Add x to the app</CardText>
+							<CardOwner>Kağan T.</CardOwner>
+						</CardContent>
+
+						<CardActions>
+							<Vote>
+								<CardButton>
+									<BiUpvote size={20} />
+								</CardButton>
+								<CardButton>
+									<BiDownvote size={20} />
+								</CardButton>
+							</Vote>
+						</CardActions>
+					</Card>
+					<Card color="#9966CC" onClick={toggleCardModal}>
 						<CardContent>
 							<CardText>Add x to the app</CardText>
 							<CardOwner>Kağan T.</CardOwner>
 						</CardContent>
 						<CardActions>
 							<Vote>
-								<CardButton>+</CardButton>
-								<CardButton>-</CardButton>
+								<CardButton>
+									<BiUpvote size={20} />
+								</CardButton>
+								<CardButton>
+									<BiDownvote size={20} />
+								</CardButton>
 							</Vote>
 						</CardActions>
 					</Card>
-					<Card color="#9966CC">
+					<Card color="#9966CC" onClick={toggleCardModal}>
 						<CardContent>
 							<CardText>Add x to the app</CardText>
 							<CardOwner>Kağan T.</CardOwner>
 						</CardContent>
 						<CardActions>
 							<Vote>
-								<CardButton>+</CardButton>
-								<CardButton>-</CardButton>
+								<CardButton>
+									<BiUpvote size={20} />
+								</CardButton>
+								<CardButton>
+									<BiDownvote size={20} />
+								</CardButton>
 							</Vote>
 						</CardActions>
 					</Card>
-					<Card color="#9966CC">
-						<CardContent>
-							<CardText>Add x to the app</CardText>
-							<CardOwner>Kağan T.</CardOwner>
-						</CardContent>
-						<CardActions>
-							<Vote>
-								<CardButton>+</CardButton>
-								<CardButton>-</CardButton>
-							</Vote>
-						</CardActions>
-					</Card>
-					<AddCard>Add Idea</AddCard>
+					<AddCard onClick={toggleModal}>
+						Add Idea
+						<AiOutlineFileAdd size={20} />
+					</AddCard>
 				</List>
 				<List>
 					<ListText>Todo</ListText>
-					<Card color="#FFEF00">
+					<Card color="#FFEF00" onClick={toggleCardModal}>
 						<CardContent>
 							<CardText>Add x to the app</CardText>
 							<CardOwner>
@@ -234,10 +328,12 @@ const Board = () => {
 							</CardOwner>
 						</CardContent>
 						<CardActions>
-							<CardButton>Start</CardButton>
+							<CardButton>
+								<VscDebugStart size={20} />
+							</CardButton>
 						</CardActions>
 					</Card>
-					<Card color="#FFEF00">
+					<Card color="#FFEF00" onClick={toggleCardModal}>
 						<CardContent>
 							<CardText>Add x to the app</CardText>
 							<CardOwner>
@@ -245,10 +341,12 @@ const Board = () => {
 							</CardOwner>
 						</CardContent>
 						<CardActions>
-							<CardButton>Start</CardButton>
+							<CardButton>
+								<VscDebugStart size={20} />
+							</CardButton>
 						</CardActions>
 					</Card>
-					<Card color="#FFEF00">
+					<Card color="#FFEF00" onClick={toggleCardModal}>
 						<CardContent>
 							<CardText>Add x to the app</CardText>
 							<CardOwner>
@@ -256,13 +354,15 @@ const Board = () => {
 							</CardOwner>
 						</CardContent>
 						<CardActions>
-							<CardButton>Start</CardButton>
+							<CardButton>
+								<VscDebugStart size={20} />
+							</CardButton>
 						</CardActions>
 					</Card>
 				</List>
 				<List>
 					<ListText>Progress</ListText>
-					<Card color="#FFBF00">
+					<Card color="#FFBF00" onClick={toggleCardModal}>
 						<CardContent>
 							<CardText>Add x to the app</CardText>
 							<CardOwner>
@@ -271,10 +371,12 @@ const Board = () => {
 							</CardOwner>
 						</CardContent>
 						<CardActions>
-							<CardButton>Finish</CardButton>
+							<CardButton>
+								<MdDoneOutline size={20} />
+							</CardButton>
 						</CardActions>
 					</Card>
-					<Card color="#FFBF00">
+					<Card color="#FFBF00" onClick={toggleCardModal}>
 						<CardContent>
 							<CardText>Add x to the app</CardText>
 							<CardOwner>
@@ -283,10 +385,12 @@ const Board = () => {
 							</CardOwner>
 						</CardContent>
 						<CardActions>
-							<CardButton>Finish</CardButton>
+							<CardButton>
+								<MdDoneOutline size={20} />
+							</CardButton>
 						</CardActions>
 					</Card>
-					<Card color="#FFBF00">
+					<Card color="#FFBF00" onClick={toggleCardModal}>
 						<CardContent>
 							<CardText>Add x to the app</CardText>
 							<CardOwner>
@@ -295,13 +399,15 @@ const Board = () => {
 							</CardOwner>
 						</CardContent>
 						<CardActions>
-							<CardButton>Finish</CardButton>
+							<CardButton>
+								<MdDoneOutline size={20} />
+							</CardButton>
 						</CardActions>
 					</Card>
 				</List>
 				<List>
 					<ListText>Finished</ListText>
-					<Card color="#80FF00">
+					<Card color="#80FF00" onClick={toggleCardModal}>
 						<CardContent>
 							<CardText>Add x to the app</CardText>
 							<CardOwner>
@@ -309,10 +415,12 @@ const Board = () => {
 							</CardOwner>
 						</CardContent>
 						<CardActions>
-							<CardButton>Remove</CardButton>
+							<CardButton>
+								<MdRemoveCircleOutline size={20} />
+							</CardButton>
 						</CardActions>
 					</Card>
-					<Card color="#80FF00">
+					<Card color="#80FF00" onClick={toggleCardModal}>
 						<CardContent>
 							<CardText>Add x to the app</CardText>
 							<CardOwner>
@@ -320,10 +428,12 @@ const Board = () => {
 							</CardOwner>
 						</CardContent>
 						<CardActions>
-							<CardButton>Remove</CardButton>
+							<CardButton>
+								<MdRemoveCircleOutline size={20} />
+							</CardButton>
 						</CardActions>
 					</Card>
-					<Card color="#80FF00">
+					<Card color="#80FF00" onClick={toggleCardModal}>
 						<CardContent>
 							<CardText>Add x to the app</CardText>
 							<CardOwner>
@@ -331,11 +441,47 @@ const Board = () => {
 							</CardOwner>
 						</CardContent>
 						<CardActions>
-							<CardButton>Remove</CardButton>
+							<CardButton>
+								<MdRemoveCircleOutline size={20} />
+							</CardButton>
 						</CardActions>
 					</Card>
 				</List>
 			</Wrapper>
+			<StyledModal
+				isOpen={isOpen}
+				onBackgroundClick={toggleModal}
+				onEscapeKeydown={toggleModal}
+			>
+				<ModalText>"Add New Idea"</ModalText>
+				<label>Idea:</label>
+				<Input type="text" fullWidth />
+				<label>Description:</label>
+				<Input type="text" fullWidth />
+				<label>Estimated Time:</label>
+				<Input type="text" fullWidth />
+				<Button onClick={toggleModal} fullWidth>
+					Done
+				</Button>
+			</StyledModal>
+			<StyledModal
+				isOpen={isCardOpen}
+				onBackgroundClick={toggleCardModal}
+				onEscapeKeydown={toggleCardModal}
+			>
+				<ModalText>Idea Info</ModalText>
+				<h4>Add x to the app</h4>
+				<p>
+					Lorem ipsum dolor, sit amet consectetur adipisicing elit. Vero
+					possimus quia corrupti vitae adipisci sapiente molestiae ullam
+					quibusdam doloribus cum deleniti, iste fuga soluta delectus est? Nam
+					fugiat quae neque.
+				</p>
+				<p>Estimated time: 2 hours and 30 mins</p>
+				<Button onClick={toggleCardModal} fullWidth>
+					Done
+				</Button>
+			</StyledModal>
 		</Container>
 	);
 };
