@@ -2,7 +2,7 @@ import React from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import GlobalStyle from "../globalStyles";
-import { TbHome, TbLayoutDashboard, TbLogout } from "react-icons/tb";
+import { TbHome, TbLayoutDashboard, TbLogout, TbLogin } from "react-icons/tb";
 import { ModalProvider } from "styled-react-modal";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -134,7 +134,13 @@ const Root = () => {
 								</ItemWrapper>
 							</ItemContainer>
 							<ItemContainer>
-								<ItemWrapper to="/logout">
+								<ItemWrapper to="/login">
+									<TbLogin />
+									<ItemText>Login</ItemText>
+								</ItemWrapper>
+							</ItemContainer>
+							<ItemContainer>
+								<ItemWrapper to="/api/logout">
 									<TbLogout />
 									<ItemText>Logout</ItemText>
 								</ItemWrapper>
