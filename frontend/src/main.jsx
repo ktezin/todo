@@ -4,7 +4,22 @@ import Root from "./routes/Root";
 import Login from "./routes/Login";
 import Boards from "./routes/Boards";
 import Board from "./routes/Board";
-import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
+import userReducer from "./reducers/userReducer";
+import boardReducer from "./reducers/boardReducer";
+import {
+	createBrowserRouter,
+	RouterProvider,
+	Navigate,
+} from "react-router-dom";
+import { configureStore } from "@reduxjs/toolkit";
+import { Provider } from "react-redux";
+
+const store = configureStore({
+	reducer: {
+		user: userReducer,
+		board: boardReducer,
+	},
+});
 
 const router = createBrowserRouter([
 	{
@@ -13,7 +28,7 @@ const router = createBrowserRouter([
 		children: [
 			{
 				path: "/",
-				element: <Navigate to="/boards"/>,
+				element: <Navigate to="/boards" />,
 			},
 			{
 				path: "/boards",
@@ -33,6 +48,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")).render(
 	<React.StrictMode>
-		<RouterProvider router={router} />
+		<Provider store={store}>
+			<RouterProvider router={router} />
+		</Provider>
 	</React.StrictMode>
 );

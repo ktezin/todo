@@ -1,6 +1,12 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { Form, Link } from "react-router-dom";
 import styled from "styled-components";
+import {
+	boardData,
+	createBoardAsync,
+	loadBoardsAsync,
+} from "../reducers/boardReducer";
 
 const Container = styled.div``;
 
@@ -47,20 +53,43 @@ const Card = styled(Link)`
 `;
 
 const Boards = () => {
+	const dispatch = useDispatch();
+	const { loading, boards } = useSelector(boardData);
+
+	useEffect(() => {
+		dispatch(loadBoardsAsync());
+	}, [dispatch]);
+
+	const submitHandler = (e) => {
+		e.preventDefault();
+		const data = new FormData(e.currentTarget);
+		
+		dispatch(createBoardAsync(data.get("name")));
+	};
+
 	return (
 		<Container>
 			<HeaderText>Boards</HeaderText>
-			<Cards>
-				{[0, 1, 2, 3, 4].map((value, index) => (
-					<Card
-						to="/boards/test"
-						image={"https://source.unsplash.com/random"}
-						key={index}
-					>
-						Test Board {value}
-					</Card>
-				))}
-			</Cards>
+			{loading ? (
+				"Loading"
+			) : (
+				<Cards>
+					{boards &&
+						boards.map((value, index) => (
+							<Card
+								to={`/boards/${value._id}`}
+								image={"https://source.unsplash.com/random"}
+								key={index}
+							>
+								{value.name}
+							</Card>
+						))}
+				</Cards>
+			)}
+			<form onSubmit={submitHandler}>
+				<input name="name" />
+				<button type="submit">Create Board</button>
+			</form>
 		</Container>
 	);
 };

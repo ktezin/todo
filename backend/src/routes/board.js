@@ -1,7 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const { getBoard } = require("../controllers/boardController");
+const {
+	getBoard,
+	getBoards,
+	createBoard,
+	addIdea,
+} = require("../controllers/boardController");
 
-router.route("/boards/:id").get(getBoard);
+router.route("/boards").get(getBoards);
+router.route("/boards/:id").get(getBoard).put(addIdea);
+router.route("/board").post(createBoard);
 
 module.exports = router;

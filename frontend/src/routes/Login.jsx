@@ -10,8 +10,7 @@ const Container = styled.div`
 	align-items: center;
 `;
 
-const Title = styled.h2`
-`;
+const Title = styled.h2``;
 
 const GoogleLogin = styled.a`
 	display: flex;
@@ -21,8 +20,10 @@ const GoogleLogin = styled.a`
 	color: white;
 	border: 1px solid lightgrey;
 	border-radius: 0.3rem;
-	padding: 0.3rem;
+	padding-right: 0.5rem;
+	padding-left: 0.5rem;
 	text-decoration: none;
+	font-weight: 700;
 `;
 
 const Login = () => {
@@ -30,7 +31,7 @@ const Login = () => {
 		<Container>
 			<Title>Login</Title>
 			<GoogleLogin href="/api/auth/google">
-				<FaGoogle />
+				<FaGoogle style={{ marginRight: "0.2rem" }} size={"20"} />
 				<p>Login via Google</p>
 			</GoogleLogin>
 		</Container>

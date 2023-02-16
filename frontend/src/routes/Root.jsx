@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import GlobalStyle from "../globalStyles";
 import { TbHome, TbLayoutDashboard, TbLogout, TbLogin } from "react-icons/tb";
 import { ModalProvider } from "styled-react-modal";
 import { AnimatePresence, motion } from "framer-motion";
+import { useSelector, useDispatch } from "react-redux";
+import { loadUserAsync, logoutAsync, userData } from "../reducers/userReducer";
 
 const AppBar = styled.div`
 	top: 0;
@@ -113,7 +115,15 @@ const animationConfiguration = {
 };
 
 const Root = () => {
+	const dispatch = useDispatch();
 	const location = useLocation();
+
+	const { loading, user, isAuthenticated } = useSelector(userData);
+
+	useEffect(() => {
+		dispatch(loadUserAsync());
+	}, [dispatch]);
+
 	return (
 		<div>
 			<ModalProvider>
@@ -133,18 +143,21 @@ const Root = () => {
 									<ItemText>Boards</ItemText>
 								</ItemWrapper>
 							</ItemContainer>
-							<ItemContainer>
-								<ItemWrapper to="/login">
-									<TbLogin />
-									<ItemText>Login</ItemText>
-								</ItemWrapper>
-							</ItemContainer>
-							<ItemContainer>
-								<ItemWrapper to="/api/logout">
-									<TbLogout />
-									<ItemText>Logout</ItemText>
-								</ItemWrapper>
-							</ItemContainer>
+							{isAuthenticated ? (
+								<ItemContainer>
+									<ItemWrapper onClick={() => dispatch(logoutAsync())}>
+										<TbLogout />
+										<ItemText>Logout</ItemText>
+									</ItemWrapper>
+								</ItemContainer>
+							) : (
+								<ItemContainer>
+									<ItemWrapper to="/login">
+										<TbLogin />
+										<ItemText>Login</ItemText>
+									</ItemWrapper>
+								</ItemContainer>
+							)}
 						</ItemsList>
 					</AppBarWrapper>
 				</AppBar>

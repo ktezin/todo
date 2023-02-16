@@ -14,6 +14,7 @@ const passportStrategy = require("./passport");
 const port = process.env.PORT || 4000;
 
 app.use(cookieParser());
+app.use(bodyParser.json());
 app.use(
 	session({
 		secret: "keyboard cat",

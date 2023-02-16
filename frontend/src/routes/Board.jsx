@@ -1,10 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { VscDebugStart } from "react-icons/vsc";
 import { MdDoneOutline, MdRemoveCircleOutline } from "react-icons/md";
 import { BiUpvote, BiDownvote } from "react-icons/bi";
 import { AiOutlineFileAdd } from "react-icons/ai";
 import Modal from "styled-react-modal";
+import { Form, useLoaderData, useParams } from "react-router-dom";
+import {
+	addIdeaAsync,
+	boardData,
+	loadBoardAsync,
+} from "../reducers/boardReducer";
+import { useDispatch, useSelector } from "react-redux";
 
 const Container = styled.div``;
 
@@ -238,231 +245,146 @@ const Button = styled.button`
 `;
 
 const Board = () => {
+	const dispatch = useDispatch();
+	const { loading, board } = useSelector(boardData);
 	const [isOpen, setIsOpen] = React.useState(false);
 	const [isCardOpen, setIsCardOpen] = React.useState(false);
+	const [card, setCard] = React.useState({});
+	const boardId = useParams().boardId;
+
+	useEffect(() => {
+		dispatch(loadBoardAsync(boardId));
+	}, [dispatch]);
 
 	function toggleModal(e) {
 		setIsOpen(!isOpen);
 	}
 
-	function toggleCardModal(e) {
+	function toggleCardModal(e, value) {
 		setIsCardOpen(!isCardOpen);
+		setCard(value);
 	}
+
+	const submitHandler = (e) => {
+		e.preventDefault();
+		const data = new FormData(e.currentTarget);
+
+		dispatch(addIdeaAsync(boardId, data));
+	};
 
 	return (
 		<Container>
-			<Header>
-				<HeaderText>Project X's Board</HeaderText>
-				<Members>
-					<MembersText>Members: </MembersText>
-					<MemberButton>sa</MemberButton>
-					<MemberButton>as</MemberButton>
-				</Members>
-			</Header>
+			{loading ? (
+				"loading"
+			) : (
+				<>
+					<Header>
+						<HeaderText>{board.name}</HeaderText>
+						<Members>
+							<MembersText>Members: </MembersText>
+							{board.members.map((value, index) => (
+								<MemberButton key={index}>{value.firstName}</MemberButton>
+							))}
+						</Members>
+					</Header>
 
-			<Wrapper>
-				<List>
-					<ListText>Brainstorm</ListText>
-					<Card color="#9966CC">
-						<CardContent onClick={toggleCardModal}>
-							<CardText>Add x to the app</CardText>
-							<CardOwner>Kağan T.</CardOwner>
-						</CardContent>
+					<Wrapper>
+						<List>
+							<ListText>Brainstorm</ListText>
+							{board.ideas.map((value, index) => (
+								<Card color="#9966CC" key={index}>
+									<CardContent onClick={(e) => toggleCardModal(e, value)}>
+										<CardText>{value.title}</CardText>
+										<CardOwner>{value.user}</CardOwner>
+									</CardContent>
 
-						<CardActions>
-							<Vote>
-								<CardButton>
-									<BiUpvote size={20} />
-								</CardButton>
-								<CardButton>
-									<BiDownvote size={20} />
-								</CardButton>
-							</Vote>
-						</CardActions>
-					</Card>
-					<Card color="#9966CC" onClick={toggleCardModal}>
-						<CardContent>
-							<CardText>Add x to the app</CardText>
-							<CardOwner>Kağan T.</CardOwner>
-						</CardContent>
-						<CardActions>
-							<Vote>
-								<CardButton>
-									<BiUpvote size={20} />
-								</CardButton>
-								<CardButton>
-									<BiDownvote size={20} />
-								</CardButton>
-							</Vote>
-						</CardActions>
-					</Card>
-					<Card color="#9966CC" onClick={toggleCardModal}>
-						<CardContent>
-							<CardText>Add x to the app</CardText>
-							<CardOwner>Kağan T.</CardOwner>
-						</CardContent>
-						<CardActions>
-							<Vote>
-								<CardButton>
-									<BiUpvote size={20} />
-								</CardButton>
-								<CardButton>
-									<BiDownvote size={20} />
-								</CardButton>
-							</Vote>
-						</CardActions>
-					</Card>
-					<AddCard onClick={toggleModal}>
-						Add Idea
-						<AiOutlineFileAdd size={20} />
-					</AddCard>
-				</List>
-				<List>
-					<ListText>Todo</ListText>
-					<Card color="#FFEF00" onClick={toggleCardModal}>
-						<CardContent>
-							<CardText>Add x to the app</CardText>
-							<CardOwner>
-								Kağan T.
-								<CardTimeText>Overall 3 hours</CardTimeText>
-							</CardOwner>
-						</CardContent>
-						<CardActions>
-							<CardButton>
-								<VscDebugStart size={20} />
-							</CardButton>
-						</CardActions>
-					</Card>
-					<Card color="#FFEF00" onClick={toggleCardModal}>
-						<CardContent>
-							<CardText>Add x to the app</CardText>
-							<CardOwner>
-								Kağan T.<CardTimeText>Overall 3 hours</CardTimeText>
-							</CardOwner>
-						</CardContent>
-						<CardActions>
-							<CardButton>
-								<VscDebugStart size={20} />
-							</CardButton>
-						</CardActions>
-					</Card>
-					<Card color="#FFEF00" onClick={toggleCardModal}>
-						<CardContent>
-							<CardText>Add x to the app</CardText>
-							<CardOwner>
-								Kağan T.<CardTimeText>Overall 3 hours</CardTimeText>
-							</CardOwner>
-						</CardContent>
-						<CardActions>
-							<CardButton>
-								<VscDebugStart size={20} />
-							</CardButton>
-						</CardActions>
-					</Card>
-				</List>
-				<List>
-					<ListText>Progress</ListText>
-					<Card color="#FFBF00" onClick={toggleCardModal}>
-						<CardContent>
-							<CardText>Add x to the app</CardText>
-							<CardOwner>
-								Kağan T. working on it
-								<CardTimeText>2h and 12min elapsed</CardTimeText>
-							</CardOwner>
-						</CardContent>
-						<CardActions>
-							<CardButton>
-								<MdDoneOutline size={20} />
-							</CardButton>
-						</CardActions>
-					</Card>
-					<Card color="#FFBF00" onClick={toggleCardModal}>
-						<CardContent>
-							<CardText>Add x to the app</CardText>
-							<CardOwner>
-								Kağan T. working on it
-								<CardTimeText>2h and 12min elapsed</CardTimeText>
-							</CardOwner>
-						</CardContent>
-						<CardActions>
-							<CardButton>
-								<MdDoneOutline size={20} />
-							</CardButton>
-						</CardActions>
-					</Card>
-					<Card color="#FFBF00" onClick={toggleCardModal}>
-						<CardContent>
-							<CardText>Add x to the app</CardText>
-							<CardOwner>
-								Kağan T. working on it
-								<CardTimeText>2h and 12min elapsed</CardTimeText>
-							</CardOwner>
-						</CardContent>
-						<CardActions>
-							<CardButton>
-								<MdDoneOutline size={20} />
-							</CardButton>
-						</CardActions>
-					</Card>
-				</List>
-				<List>
-					<ListText>Finished</ListText>
-					<Card color="#80FF00" onClick={toggleCardModal}>
-						<CardContent>
-							<CardText>Add x to the app</CardText>
-							<CardOwner>
-								Kağan T. completed<CardTimeText>4h and 2min</CardTimeText>
-							</CardOwner>
-						</CardContent>
-						<CardActions>
-							<CardButton>
-								<MdRemoveCircleOutline size={20} />
-							</CardButton>
-						</CardActions>
-					</Card>
-					<Card color="#80FF00" onClick={toggleCardModal}>
-						<CardContent>
-							<CardText>Add x to the app</CardText>
-							<CardOwner>
-								Kağan T. completed<CardTimeText>4h and 2min</CardTimeText>
-							</CardOwner>
-						</CardContent>
-						<CardActions>
-							<CardButton>
-								<MdRemoveCircleOutline size={20} />
-							</CardButton>
-						</CardActions>
-					</Card>
-					<Card color="#80FF00" onClick={toggleCardModal}>
-						<CardContent>
-							<CardText>Add x to the app</CardText>
-							<CardOwner>
-								Kağan T. completed<CardTimeText>4h and 2min</CardTimeText>
-							</CardOwner>
-						</CardContent>
-						<CardActions>
-							<CardButton>
-								<MdRemoveCircleOutline size={20} />
-							</CardButton>
-						</CardActions>
-					</Card>
-				</List>
-			</Wrapper>
+									<CardActions>
+										<Vote>
+											<CardButton>
+												<BiUpvote size={20} />
+											</CardButton>
+											<CardButton>
+												<BiDownvote size={20} />
+											</CardButton>
+										</Vote>
+									</CardActions>
+								</Card>
+							))}
+							<AddCard onClick={toggleModal}>
+								Add Idea
+								<AiOutlineFileAdd size={20} />
+							</AddCard>
+						</List>
+						<List>
+							<ListText>Todo</ListText>
+							<Card color="#FFEF00" onClick={toggleCardModal}>
+								<CardContent>
+									<CardText>Add x to the app</CardText>
+									<CardOwner>
+										Kağan T.
+										<CardTimeText>Overall 3 hours</CardTimeText>
+									</CardOwner>
+								</CardContent>
+								<CardActions>
+									<CardButton>
+										<VscDebugStart size={20} />
+									</CardButton>
+								</CardActions>
+							</Card>
+						</List>
+						<List>
+							<ListText>Progress</ListText>
+							<Card color="#FFBF00" onClick={toggleCardModal}>
+								<CardContent>
+									<CardText>Add x to the app</CardText>
+									<CardOwner>
+										Kağan T. working on it
+										<CardTimeText>2h and 12min elapsed</CardTimeText>
+									</CardOwner>
+								</CardContent>
+								<CardActions>
+									<CardButton>
+										<MdDoneOutline size={20} />
+									</CardButton>
+								</CardActions>
+							</Card>
+						</List>
+						<List>
+							<ListText>Finished</ListText>
+							<Card color="#80FF00" onClick={toggleCardModal}>
+								<CardContent>
+									<CardText>Add x to the app</CardText>
+									<CardOwner>
+										Kağan T. completed<CardTimeText>4h and 2min</CardTimeText>
+									</CardOwner>
+								</CardContent>
+								<CardActions>
+									<CardButton>
+										<MdRemoveCircleOutline size={20} />
+									</CardButton>
+								</CardActions>
+							</Card>
+						</List>
+					</Wrapper>
+				</>
+			)}
 			<StyledModal
 				isOpen={isOpen}
 				onBackgroundClick={toggleModal}
 				onEscapeKeydown={toggleModal}
 			>
-				<ModalText>"Add New Idea"</ModalText>
-				<label>Idea:</label>
-				<Input type="text" fullWidth />
-				<label>Description:</label>
-				<Input type="text" fullWidth />
-				<label>Estimated Time:</label>
-				<Input type="text" fullWidth />
-				<Button onClick={toggleModal} fullWidth>
-					Done
-				</Button>
+				<form onSubmit={submitHandler}>
+					<ModalText>"Add New Idea"</ModalText>
+					<label>Idea:</label>
+					<Input type="text" name="title" fullWidth />
+					<label>Description:</label>
+					<Input type="text" name="description" fullWidth />
+					<label>Estimated Time:</label>
+					<Input type="text" name="estimatedTime" fullWidth />
+					<Button type="submit" onClick={toggleModal} fullWidth>
+						Done
+					</Button>
+				</form>
 			</StyledModal>
 			<StyledModal
 				isOpen={isCardOpen}
@@ -470,15 +392,10 @@ const Board = () => {
 				onEscapeKeydown={toggleCardModal}
 			>
 				<ModalText>Idea Info</ModalText>
-				<h4>Add x to the app</h4>
-				<p>
-					Lorem ipsum dolor, sit amet consectetur adipisicing elit. Vero
-					possimus quia corrupti vitae adipisci sapiente molestiae ullam
-					quibusdam doloribus cum deleniti, iste fuga soluta delectus est? Nam
-					fugiat quae neque.
-				</p>
-				<p>Estimated time: 2 hours and 30 mins</p>
-				<Button onClick={toggleCardModal} fullWidth>
+				<h4>{card.title}</h4>
+				<p>{card.description}</p>
+				<p>{card.estimatedTime}</p>
+				<Button onClick={(e) => toggleCardModal(e, {})} fullWidth>
 					Done
 				</Button>
 			</StyledModal>
