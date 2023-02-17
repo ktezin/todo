@@ -1,12 +1,8 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Form, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
-import {
-	boardData,
-	createBoardAsync,
-	loadBoardsAsync,
-} from "../reducers/boardReducer";
+import { boardData, createBoard, getBoards } from "../reducers/boardReducer";
 
 const Container = styled.div``;
 
@@ -57,14 +53,14 @@ const Boards = () => {
 	const { loading, boards } = useSelector(boardData);
 
 	useEffect(() => {
-		dispatch(loadBoardsAsync());
+		dispatch(getBoards());
 	}, [dispatch]);
 
 	const submitHandler = (e) => {
 		e.preventDefault();
 		const data = new FormData(e.currentTarget);
-		
-		dispatch(createBoardAsync(data.get("name")));
+
+		dispatch(createBoard(data.get("name")));
 	};
 
 	return (

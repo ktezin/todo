@@ -5,12 +5,8 @@ import { MdDoneOutline, MdRemoveCircleOutline } from "react-icons/md";
 import { BiUpvote, BiDownvote } from "react-icons/bi";
 import { AiOutlineFileAdd } from "react-icons/ai";
 import Modal from "styled-react-modal";
-import { Form, useLoaderData, useParams } from "react-router-dom";
-import {
-	addIdeaAsync,
-	boardData,
-	loadBoardAsync,
-} from "../reducers/boardReducer";
+import { useParams } from "react-router-dom";
+import { addIdea, boardData, getBoard } from "../reducers/boardReducer";
 import { useDispatch, useSelector } from "react-redux";
 
 const Container = styled.div``;
@@ -253,7 +249,7 @@ const Board = () => {
 	const boardId = useParams().boardId;
 
 	useEffect(() => {
-		dispatch(loadBoardAsync(boardId));
+		dispatch(getBoard(boardId));
 	}, [dispatch]);
 
 	function toggleModal(e) {
@@ -269,7 +265,7 @@ const Board = () => {
 		e.preventDefault();
 		const data = new FormData(e.currentTarget);
 
-		dispatch(addIdeaAsync(boardId, data));
+		dispatch(addIdea(boardId, data));
 	};
 
 	return (
@@ -279,37 +275,39 @@ const Board = () => {
 			) : (
 				<>
 					<Header>
-						<HeaderText>{board.name}</HeaderText>
+						<HeaderText>{board.name && board.name}</HeaderText>
 						<Members>
 							<MembersText>Members: </MembersText>
-							{board.members.map((value, index) => (
-								<MemberButton key={index}>{value.firstName}</MemberButton>
-							))}
+							{board.members &&
+								board.members.map((value, index) => (
+									<MemberButton key={index}>{value}</MemberButton>
+								))}
 						</Members>
 					</Header>
 
 					<Wrapper>
 						<List>
 							<ListText>Brainstorm</ListText>
-							{board.ideas.map((value, index) => (
-								<Card color="#9966CC" key={index}>
-									<CardContent onClick={(e) => toggleCardModal(e, value)}>
-										<CardText>{value.title}</CardText>
-										<CardOwner>{value.user}</CardOwner>
-									</CardContent>
+							{board.ideas &&
+								board.ideas.map((value, index) => (
+									<Card color="#9966CC" key={index}>
+										<CardContent onClick={(e) => toggleCardModal(e, value)}>
+											<CardText>{value.title}</CardText>
+											<CardOwner>{value.user}</CardOwner>
+										</CardContent>
 
-									<CardActions>
-										<Vote>
-											<CardButton>
-												<BiUpvote size={20} />
-											</CardButton>
-											<CardButton>
-												<BiDownvote size={20} />
-											</CardButton>
-										</Vote>
-									</CardActions>
-								</Card>
-							))}
+										<CardActions>
+											<Vote>
+												<CardButton>
+													<BiUpvote size={20} />
+												</CardButton>
+												<CardButton>
+													<BiDownvote size={20} />
+												</CardButton>
+											</Vote>
+										</CardActions>
+									</Card>
+								))}
 							<AddCard onClick={toggleModal}>
 								Add Idea
 								<AiOutlineFileAdd size={20} />

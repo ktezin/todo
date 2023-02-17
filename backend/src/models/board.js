@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const boardSchema = new mongoose.Schema({
 	name: {
 		type: String,
-		required: [true, "Lütfen video ismini girin"],
+		required: [true, "Please enter board name"],
 		trim: true,
 		maxLength: [60, "Board name must be less than 60 characters"],
 	},
@@ -43,9 +43,8 @@ const boardSchema = new mongoose.Schema({
 					required: true,
 				},
 			],
-			user: {
-				type: mongoose.Schema.Types.ObjectId,
-				ref: "User",
+			addedBy: {
+				type: String,
 				required: true,
 			},
 		},
