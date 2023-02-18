@@ -60,7 +60,8 @@ const Boards = () => {
 		e.preventDefault();
 		const data = new FormData(e.currentTarget);
 
-		dispatch(createBoard(data.get("name")));
+		const response = dispatch(createBoard(data.get("name")));
+		response.then(() => location.reload());
 	};
 
 	return (

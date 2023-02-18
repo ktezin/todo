@@ -58,14 +58,18 @@ export const createBoard = createAsyncThunk(
 
 export const addIdea = createAsyncThunk(
 	"board/idea",
-	async (id, data, thunkAPI) => {
+	async (args, thunkAPI) => {
 		const config = {
 			headers: {
 				"Content-Type": "application/json",
 			},
 		};
 		try {
-			const response = await axios.put(`/api/boards/${id}`, data, config);
+			const response = await axios.put(
+				`/api/boards/${args.id}`,
+				args.data,
+				config
+			);
 			if (response.status !== 200) {
 				return thunkAPI.rejectWithValue(response.status);
 			}

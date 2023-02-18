@@ -27,18 +27,24 @@ exports.getBoard = catchAsyncErrors(async (req, res, next) => {
 		return;
 	}
 
-	const board = await Board.findOne(
-		{ _id: req.params.id },
-		{ members: req.user._id }
-	);
+	const board = await Board.findById(req.params.id);
 
 	if (!board) {
 		res.status(401).json({
-			message: "Board couldn't found", // or board is found but members does not contain the user
+			message: "Board couldn't found",
 			success: false,
 		});
 		return;
 	}
+
+	if (!board.members.includes(req.user._id)) {
+		res.status(401).json({
+			message: "You are not permitted to access this board",
+			success: false,
+		});
+		return;
+	}
+	console.log(board);
 
 	res.status(200).json({ board: board, success: true });
 });
@@ -79,16 +85,25 @@ exports.addIdea = catchAsyncErrors(async (req, res, next) => {
 
 	const user = await User.findById(req.user._id);
 	const addedBy = user.firstName + " " + user.lastName;
-	const board = await Board.findByIdAndUpdate(req.params.id, {
+	const board = await Board.findById(req.params.id, {
 		members: req.user._id,
-		$push: {
-			ideas: {
-				title,
-				description,
-				estimatedTime,
-				addedBy,
-			},
-		},
 	});
+
+	if (!board) {
+		res.status(401).json({
+			message: "Board couldn't found", // or board is found but members does not contain the user
+			success: false,
+		});
+		return;
+	}
+
+	board.ideas.push({
+		title,
+		description,
+		estimatedTime,
+		addedBy,
+	});
+
+	await board.save();
 	res.status(200).json({ board: board, success: true });
 });

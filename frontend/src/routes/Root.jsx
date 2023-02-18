@@ -7,6 +7,7 @@ import { ModalProvider } from "styled-react-modal";
 import { AnimatePresence, motion } from "framer-motion";
 import { useSelector, useDispatch } from "react-redux";
 import { loadUser, logout, userData } from "../reducers/userReducer";
+import Login from "./Login";
 
 const AppBar = styled.div`
 	top: 0;
@@ -177,7 +178,7 @@ const Root = () => {
 						transition={{ duration: 0.4 }}
 					>
 						<Children>
-							<Outlet />
+							{auth.isAuthenticated ? <Outlet /> : <Login />}
 						</Children>
 					</motion.div>
 				</AnimatePresence>

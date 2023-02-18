@@ -250,7 +250,7 @@ const Board = () => {
 
 	useEffect(() => {
 		dispatch(getBoard(boardId));
-	}, [dispatch]);
+	}, [dispatch, board]);
 
 	function toggleModal(e) {
 		setIsOpen(!isOpen);
@@ -265,7 +265,7 @@ const Board = () => {
 		e.preventDefault();
 		const data = new FormData(e.currentTarget);
 
-		dispatch(addIdea(boardId, data));
+		dispatch(addIdea({ id: boardId, data: data }));
 	};
 
 	return (
@@ -293,7 +293,8 @@ const Board = () => {
 									<Card color="#9966CC" key={index}>
 										<CardContent onClick={(e) => toggleCardModal(e, value)}>
 											<CardText>{value.title}</CardText>
-											<CardOwner>{value.user}</CardOwner>
+											<CardOwner>{value.addedBy}</CardOwner>
+											<CardOwner>{value.estimatedTime}</CardOwner>
 										</CardContent>
 
 										<CardActions>
@@ -386,8 +387,8 @@ const Board = () => {
 			</StyledModal>
 			<StyledModal
 				isOpen={isCardOpen}
-				onBackgroundClick={toggleCardModal}
-				onEscapeKeydown={toggleCardModal}
+				onBackgroundClick={(e) => toggleCardModal(e, {})}
+				onEscapeKeydown={(e) => toggleCardModal(e, {})}
 			>
 				<ModalText>Idea Info</ModalText>
 				<h4>{card.title}</h4>
