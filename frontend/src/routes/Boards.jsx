@@ -48,6 +48,28 @@ const Card = styled(Link)`
 	}
 `;
 
+const Form = styled.form`
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	margin: 2rem;
+`;
+
+const TextInput = styled.input`
+	width: 50vw;
+	height: 2rem;
+	border: none;
+	border-radius: 1.2rem;
+	margin-right: 1rem;
+	box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+`;
+
+const Button = styled.button`
+	border: none;
+	border-radius: 1.2rem;
+	box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+`;
+
 const Boards = () => {
 	const dispatch = useDispatch();
 	const { loading, boards } = useSelector(boardData);
@@ -67,6 +89,11 @@ const Boards = () => {
 	return (
 		<Container>
 			<HeaderText>Boards</HeaderText>
+
+			<Form onSubmit={submitHandler}>
+				<TextInput name="name" />
+				<Button type="submit">Create Board</Button>
+			</Form>
 			{loading ? (
 				"Loading"
 			) : (
@@ -83,10 +110,6 @@ const Boards = () => {
 						))}
 				</Cards>
 			)}
-			<form onSubmit={submitHandler}>
-				<input name="name" />
-				<button type="submit">Create Board</button>
-			</form>
 		</Container>
 	);
 };

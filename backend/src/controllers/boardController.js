@@ -44,7 +44,6 @@ exports.getBoard = catchAsyncErrors(async (req, res, next) => {
 		});
 		return;
 	}
-	console.log(board);
 
 	res.status(200).json({ board: board, success: true });
 });

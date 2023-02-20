@@ -250,7 +250,7 @@ const Board = () => {
 
 	useEffect(() => {
 		dispatch(getBoard(boardId));
-	}, [dispatch, board]);
+	}, [dispatch]);
 
 	function toggleModal(e) {
 		setIsOpen(!isOpen);
