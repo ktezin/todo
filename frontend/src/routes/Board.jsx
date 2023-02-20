@@ -6,7 +6,12 @@ import { BiUpvote, BiDownvote } from "react-icons/bi";
 import { AiOutlineFileAdd } from "react-icons/ai";
 import Modal from "styled-react-modal";
 import { useParams } from "react-router-dom";
-import { addIdea, boardData, getBoard } from "../reducers/boardReducer";
+import {
+	addIdea,
+	boardData,
+	getBoard,
+	getIdeas,
+} from "../reducers/boardReducer";
 import { useDispatch, useSelector } from "react-redux";
 
 const Container = styled.div``;
@@ -242,7 +247,7 @@ const Button = styled.button`
 
 const Board = () => {
 	const dispatch = useDispatch();
-	const { loading, board } = useSelector(boardData);
+	const { loading, board, ideas } = useSelector(boardData);
 	const [isOpen, setIsOpen] = React.useState(false);
 	const [isCardOpen, setIsCardOpen] = React.useState(false);
 	const [card, setCard] = React.useState({});
@@ -250,6 +255,7 @@ const Board = () => {
 
 	useEffect(() => {
 		dispatch(getBoard(boardId));
+		dispatch(getIdeas({ id: boardId }));
 	}, [dispatch]);
 
 	function toggleModal(e) {
@@ -288,8 +294,8 @@ const Board = () => {
 					<Wrapper>
 						<List>
 							<ListText>Brainstorm</ListText>
-							{board.ideas &&
-								board.ideas.map((value, index) => (
+							{ideas &&
+								ideas.map((value, index) => (
 									<Card color="#9966CC" key={index}>
 										<CardContent onClick={(e) => toggleCardModal(e, value)}>
 											<CardText>{value.title}</CardText>

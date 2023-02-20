@@ -56,6 +56,21 @@ export const createBoard = createAsyncThunk(
 	}
 );
 
+export const getIdeas = createAsyncThunk(
+	"board/getIdeas",
+	async (args, thunkAPI) => {
+		try {
+			const response = await axios.get(`/api/ideas/${args.id}`);
+			if (response.status !== 200) {
+				return thunkAPI.rejectWithValue(response.status);
+			}
+			return thunkAPI.fulfillWithValue(response.data.ideas);
+		} catch (error) {
+			throw thunkAPI.rejectWithValue(error.response.data.message);
+		}
+	}
+);
+
 export const addIdea = createAsyncThunk(
 	"board/idea",
 	async (args, thunkAPI) => {
@@ -65,8 +80,8 @@ export const addIdea = createAsyncThunk(
 			},
 		};
 		try {
-			const response = await axios.put(
-				`/api/boards/${args.id}`,
+			const response = await axios.post(
+				`/api/ideas/${args.id}`,
 				args.data,
 				config
 			);
@@ -95,7 +110,6 @@ export const boardSlice = createSlice({
 			.addCase(getBoards.rejected, (state, action) => {
 				state.loading = false;
 				state.error = action.payload;
-				console.log(action.payload);
 			})
 			.addCase(getBoard.pending, (state, action) => {
 				state.loading = false;
@@ -116,6 +130,17 @@ export const boardSlice = createSlice({
 				state.board = action.payload;
 			})
 			.addCase(createBoard.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload;
+			})
+			.addCase(getIdeas.pending, (state, action) => {
+				state.loading = false;
+			})
+			.addCase(getIdeas.fulfilled, (state, action) => {
+				state.loading = false;
+				state.ideas = action.payload;
+			})
+			.addCase(getIdeas.rejected, (state, action) => {
 				state.loading = false;
 				state.error = action.payload;
 			})

@@ -28,40 +28,9 @@ const boardSchema = new mongoose.Schema({
 	],
 	tasks: [
 		{
-			title: {
-				type: String,
-				required: [true, "Please enter task name"],
-				maxLength: [60, "Task title must be less than 60 characters"],
-			},
-			description: {
-				type: String,
-				required: [true, "Please describe task details"],
-				maxLength: [200, "Task title must be less than 200 characters"],
-			},
-			estimatedTime: {
-				type: String,
-				required: [true, "Please enter estimated time for this task"],
-				maxLength: [40, "Estimated time must be less than 40 characters"],
-			},
-			status: {
-				type: String,
-				required: [true, "Please specify status of this task"],
-				maxLength: [20, "Task status must be less than 20 characters"],
-			},
-			workingOn: {
-				type: mongoose.Schema.Types.ObjectId,
-				ref: "User",
-				required: true,
-			},
-			elapsedTime: {
-				type: Number,
-				default: 0,
-			},
-			user: {
-				type: mongoose.Schema.Types.ObjectId,
-				ref: "User",
-				required: true,
-			},
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Task",
+			required: true,
 		},
 	],
 	createdAt: {
