@@ -24,16 +24,10 @@ const taskSchema = new mongoose.Schema({
 	workingOn: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "User",
-		required: true,
 	},
 	elapsedTime: {
 		type: Number,
 		default: 0,
-	},
-	user: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "User",
-		required: true,
 	},
 	board: {
 		type: mongoose.Schema.Types.ObjectId,

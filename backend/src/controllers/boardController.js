@@ -1,6 +1,7 @@
 const Board = require("../models/board");
 const User = require("../models/user");
 const Idea = require("../models/idea");
+const Task = require("../models/task");
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
 
 exports.getBoards = catchAsyncErrors(async (req, res, next) => {
@@ -72,6 +73,38 @@ exports.createBoard = catchAsyncErrors(async (req, res, next) => {
 	res.status(200).json({ board: board, success: true });
 });
 
+exports.getIdeas = catchAsyncErrors(async (req, res, next) => {
+	if (!req.user) {
+		res.status(401).json({
+			message: "You must be logged in to see your boards",
+			success: false,
+		});
+		return;
+	}
+
+	const board = await Board.findById(req.params.id);
+
+	if (!board) {
+		res.status(401).json({
+			message: "Board couldn't found",
+			success: false,
+		});
+		return;
+	}
+
+	if (!board.members.includes(req.user._id)) {
+		res.status(401).json({
+			message: "You are not permitted to access this board",
+			success: false,
+		});
+		return;
+	}
+
+	const ideas = await Idea.find({ board: req.params.id });
+
+	res.status(200).json({ board: board, ideas: ideas, success: true });
+});
+
 exports.addIdea = catchAsyncErrors(async (req, res, next) => {
 	const { title, description, estimatedTime } = req.body;
 
@@ -118,7 +151,59 @@ exports.addIdea = catchAsyncErrors(async (req, res, next) => {
 	res.status(200).json({ board: board, idea: idea, success: true });
 });
 
-exports.getIdeas = catchAsyncErrors(async (req, res, next) => {
+exports.upvoteIdea = catchAsyncErrors(async (req, res, next) => {
+	const { ideaId } = req.body;
+
+	if (!req.user) {
+		res.status(401).json({
+			message: "You must be logged in to add ideas",
+			success: false,
+		});
+		return;
+	}
+
+	const board = await Board.findById(req.params.id);
+
+	if (!board) {
+		res.status(401).json({
+			message: "Board couldn't found",
+			success: false,
+		});
+		return;
+	}
+
+	if (!board.members.includes(req.user._id)) {
+		res.status(401).json({
+			message: "You are not permitted to access this board",
+			success: false,
+		});
+		return;
+	}
+
+	const idea = await Idea.findById(ideaId);
+	if (idea.votes.includes(req.user._id)) {
+		const votes = idea.votes.filter((value) => value !== req.user._id);
+		console.log(idea.votes, votes);
+	} else {
+		idea.votes.push(req.user._id);
+		await idea.save();
+		if (idea.votes.length >= board.members.length / 2) {
+			await Task.create({
+				title: idea.title,
+				description: idea.description,
+				estimatedTime: idea.estimatedTime,
+				status: "todo",
+				board: board._id,
+				createdBy: idea.createdBy,
+			});
+			await idea.delete();
+		}
+	}
+
+	res.status(200).json({ board: board, idea: idea, success: true });
+});
+
+exports.getTasks = catchAsyncErrors(async (req, res, next) => {
 	if (!req.user) {
 		res.status(401).json({
 			message: "You must be logged in to see your boards",
@@ -145,7 +230,7 @@ exports.getIdeas = catchAsyncErrors(async (req, res, next) => {
 		return;
 	}
 
-	const ideas = await Idea.find({ board: req.params.id });
+	const tasks = await Task.find({ board: req.params.id });
 
-	res.status(200).json({ board: board, ideas: ideas, success: true });
+	res.status(200).json({ board: board, tasks: tasks, success: true });
 });

@@ -11,7 +11,10 @@ import {
 	boardData,
 	getBoard,
 	getIdeas,
+	getTasks,
+	upvoteIdea,
 } from "../reducers/boardReducer";
+import { userData } from "../reducers/userReducer";
 import { useDispatch, useSelector } from "react-redux";
 
 const Container = styled.div``;
@@ -247,15 +250,20 @@ const Button = styled.button`
 
 const Board = () => {
 	const dispatch = useDispatch();
-	const { loading, board, ideas } = useSelector(boardData);
+
+	const { loading, board, ideas, todos } = useSelector(boardData);
+	const { user } = useSelector(userData);
+
 	const [isOpen, setIsOpen] = React.useState(false);
 	const [isCardOpen, setIsCardOpen] = React.useState(false);
 	const [card, setCard] = React.useState({});
+
 	const boardId = useParams().boardId;
 
 	useEffect(() => {
 		dispatch(getBoard(boardId));
 		dispatch(getIdeas({ id: boardId }));
+		dispatch(getTasks({ id: boardId }));
 	}, [dispatch]);
 
 	function toggleModal(e) {
@@ -267,11 +275,12 @@ const Board = () => {
 		setCard(value);
 	}
 
-	const submitHandler = (e) => {
+	const submitHandler = async (e) => {
 		e.preventDefault();
 		const data = new FormData(e.currentTarget);
 
-		dispatch(addIdea({ id: boardId, data: data }));
+		await dispatch(addIdea({ id: boardId, data: data }));
+		dispatch(getIdeas({ id: boardId }));
 	};
 
 	return (
@@ -299,14 +308,25 @@ const Board = () => {
 									<Card color="#9966CC" key={index}>
 										<CardContent onClick={(e) => toggleCardModal(e, value)}>
 											<CardText>{value.title}</CardText>
-											<CardOwner>{value.addedBy}</CardOwner>
+											<CardOwner>{value.createdBy}</CardOwner>
 											<CardOwner>{value.estimatedTime}</CardOwner>
 										</CardContent>
 
 										<CardActions>
 											<Vote>
-												<CardButton>
-													<BiUpvote size={20} />
+												<CardButton
+													onClick={() => {
+														dispatch(
+															upvoteIdea({
+																id: boardId,
+																data: { ideaId: value._id },
+															})
+														);
+													}}
+												>
+													{value.votes.includes(user._id) ? null : (
+														<BiUpvote size={20} />
+													)}
 												</CardButton>
 												<CardButton>
 													<BiDownvote size={20} />
@@ -322,20 +342,23 @@ const Board = () => {
 						</List>
 						<List>
 							<ListText>Todo</ListText>
-							<Card color="#FFEF00" onClick={toggleCardModal}>
-								<CardContent>
-									<CardText>Add x to the app</CardText>
-									<CardOwner>
-										Kağan T.
-										<CardTimeText>Overall 3 hours</CardTimeText>
-									</CardOwner>
-								</CardContent>
-								<CardActions>
-									<CardButton>
-										<VscDebugStart size={20} />
-									</CardButton>
-								</CardActions>
-							</Card>
+							{todos &&
+								todos.map((todo, index) => (
+									<Card color="#FFEF00" key={index}>
+										<CardContent onClick={(e) => toggleCardModal(e, todo)}>
+											<CardText>{todo.title}</CardText>
+											<CardOwner>
+												{todo.createdBy}
+												<CardTimeText>{todo.estimatedTime}</CardTimeText>
+											</CardOwner>
+										</CardContent>
+										<CardActions>
+											<CardButton>
+												<VscDebugStart size={20} />
+											</CardButton>
+										</CardActions>
+									</Card>
+								))}
 						</List>
 						<List>
 							<ListText>Progress</ListText>

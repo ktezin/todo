@@ -95,6 +95,45 @@ export const addIdea = createAsyncThunk(
 	}
 );
 
+export const upvoteIdea = createAsyncThunk(
+	"board/upvoteIdea",
+	async (args, thunkAPI) => {
+		const config = {
+			headers: {
+				"Content-Type": "application/json",
+			},
+		};
+		try {
+			const response = await axios.post(
+				`/api/ideas/${args.id}/upvote`,
+				args.data,
+				config
+			);
+			if (response.status !== 200) {
+				return thunkAPI.rejectWithValue(response.status);
+			}
+			return thunkAPI.fulfillWithValue(response.data.board);
+		} catch (error) {
+			throw thunkAPI.rejectWithValue(error.response.data.message);
+		}
+	}
+);
+
+export const getTasks = createAsyncThunk(
+	"board/getTasks",
+	async (args, thunkAPI) => {
+		try {
+			const response = await axios.get(`/api/tasks/${args.id}`);
+			if (response.status !== 200) {
+				return thunkAPI.rejectWithValue(response.status);
+			}
+			return thunkAPI.fulfillWithValue(response.data);
+		} catch (error) {
+			throw thunkAPI.rejectWithValue(error.response.data.message);
+		}
+	}
+);
+
 export const boardSlice = createSlice({
 	name: "board",
 	initialState,
@@ -152,6 +191,29 @@ export const boardSlice = createSlice({
 				state.board = action.payload;
 			})
 			.addCase(addIdea.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload;
+			})
+			.addCase(upvoteIdea.pending, (state, action) => {
+				state.loading = false;
+			})
+			.addCase(upvoteIdea.fulfilled, (state, action) => {
+				state.loading = false;
+				state.board = action.payload;
+			})
+			.addCase(upvoteIdea.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload;
+			})
+			.addCase(getTasks.pending, (state, action) => {
+				state.loading = false;
+			})
+			.addCase(getTasks.fulfilled, (state, action) => {
+				state.loading = false;
+				state.board = action.payload.board;
+				state.todos = action.payload.tasks.filter((task) => task.status === "todo");
+			})
+			.addCase(getTasks.rejected, (state, action) => {
 				state.loading = false;
 				state.error = action.payload;
 			});
