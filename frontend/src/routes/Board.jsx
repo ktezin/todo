@@ -17,6 +17,7 @@ import {
 } from "../reducers/boardReducer";
 import { userData } from "../reducers/userReducer";
 import { useDispatch, useSelector } from "react-redux";
+import FocusMode from "../components/FocusMode";
 
 const Container = styled.div``;
 
@@ -249,6 +250,8 @@ const Button = styled.button`
 	}
 `;
 
+
+
 const Board = () => {
 	const dispatch = useDispatch();
 
@@ -257,6 +260,7 @@ const Board = () => {
 
 	const [isOpen, setIsOpen] = React.useState(false);
 	const [isCardOpen, setIsCardOpen] = React.useState(false);
+	const [inFocusMode, setInFocusMode] = React.useState(false);
 	const [card, setCard] = React.useState({});
 
 	const boardId = useParams().boardId;
@@ -285,7 +289,6 @@ const Board = () => {
 	};
 
 	const updateBoard = async () => {
-		console.log("test");
 		dispatch(getIdeas({ id: boardId }));
 		dispatch(getTasks({ id: boardId }));
 	};
@@ -361,7 +364,12 @@ const Board = () => {
 											</CardOwner>
 										</CardContent>
 										<CardActions>
-											<CardButton>
+											<CardButton
+												onClick={() => {
+													setCard(todo);
+													setInFocusMode(true);
+												}}
+											>
 												<VscDebugStart size={20} />
 											</CardButton>
 										</CardActions>
@@ -452,6 +460,7 @@ const Board = () => {
 					Done
 				</Button>
 			</StyledModal>
+			{inFocusMode && <FocusMode deadline={card.createdAt} inFocusMode={inFocusMode} setInFocusMode={setInFocusMode} />}
 		</Container>
 	);
 };
