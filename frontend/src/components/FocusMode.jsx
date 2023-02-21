@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import Modal from "styled-react-modal";
+import { getIdeas, getTasks, setTaskStatus } from "../reducers/boardReducer";
 
 const FocusContainer = Modal.styled`
 	display: flex;
@@ -66,19 +68,20 @@ const HOUR = MINUTE * 60;
 const DAY = HOUR * 24;
 
 export default function FocusMode(props) {
+	const dispatch = useDispatch();
 	const [timespan, setTimespan] = useState(
 		new Date(props.deadline) - Date.now()
 	);
 
 	useEffect(() => {
 		const intervalId = setInterval(() => {
-			setTimespan(Date.now() - new Date(props.deadline));
+			setTimespan(Date.now() - new Date(props.task.createdAt));
 		}, props.interval);
 
 		return () => {
 			clearInterval(intervalId);
 		};
-	}, [props.deadline, props.interval]);
+	}, [props.task.createdAt, props.interval]);
 
 	return (
 		<FocusContainer
@@ -106,7 +109,20 @@ export default function FocusMode(props) {
 			</TimeBox>
 
 			<h4>since you started working...</h4>
-			<Button onClick={() => props.setInFocusMode(false)} fullWidth>
+			<Button
+				onClick={async () => {
+					props.setInFocusMode(false);
+					await dispatch(
+						setTaskStatus({
+							id: props.task.board,
+							data: { taskId: props.task._id, status: "finished" },
+						})
+					);
+					dispatch(getIdeas({ id: props.task.board }));
+					dispatch(getTasks({ id: props.task.board }));
+				}}
+				fullWidth
+			>
 				Finish
 			</Button>
 			<Button onClick={() => props.setInFocusMode(false)} fullWidth>

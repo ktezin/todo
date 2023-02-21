@@ -254,7 +254,7 @@ const Button = styled.button`
 const Board = () => {
 	const dispatch = useDispatch();
 
-	const { loading, board, ideas, todos, progress } = useSelector(boardData);
+	const { loading, board, ideas, todos, inProgress, finished } = useSelector(boardData);
 	const { user } = useSelector(userData);
 
 	const [isOpen, setIsOpen] = React.useState(false);
@@ -384,8 +384,8 @@ const Board = () => {
 						</List>
 						<List>
 							<ListText>Progress</ListText>
-							{progress &&
-								progress.map((task, index) => (
+							{inProgress &&
+								inProgress.map((task, index) => (
 									<Card color="#FFBF00" key={index}>
 										<CardContent onClick={(e) => toggleCardModal(e, task)}>
 											<CardText>{task.title}</CardText>
@@ -404,19 +404,34 @@ const Board = () => {
 						</List>
 						<List>
 							<ListText>Finished</ListText>
-							<Card color="#80FF00" onClick={toggleCardModal}>
-								<CardContent>
-									<CardText>Add x to the app</CardText>
-									<CardOwner>
-										Kağan T. completed<CardTimeText>4h and 2min</CardTimeText>
-									</CardOwner>
-								</CardContent>
-								<CardActions>
-									<CardButton>
-										<MdRemoveCircleOutline size={20} />
-									</CardButton>
-								</CardActions>
-							</Card>
+							{finished &&
+								finished.map((task, index) => (
+									<Card color="#80FF00" key={index}>
+										<CardContent onClick={(e) => toggleCardModal(e, task)}>
+											<CardText>{task.title}</CardText>
+											<CardOwner>
+												{task.createdBy}
+												<CardTimeText>{task.estimatedTime}</CardTimeText>
+											</CardOwner>
+										</CardContent>
+										<CardActions>
+											<CardButton
+												onClick={async () => {
+													toggleCardModal(e, {});
+													await dispatch(
+														removeTask({
+															id: boardId,
+															data: { taskId: card._id },
+														})
+													);
+													updateBoard();
+												}}
+											>
+												<MdRemoveCircleOutline size={20} />
+											</CardButton>
+										</CardActions>
+									</Card>
+								))}
 						</List>
 					</Wrapper>
 				</>
@@ -471,7 +486,7 @@ const Board = () => {
 			</StyledModal>
 			{inFocusMode && (
 				<FocusMode
-					deadline={card.createdAt}
+					task={card}
 					inFocusMode={inFocusMode}
 					setInFocusMode={setInFocusMode}
 				/>
