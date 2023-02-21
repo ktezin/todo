@@ -21,31 +21,8 @@ exports.getBoards = catchAsyncErrors(async (req, res, next) => {
 });
 
 exports.getBoard = catchAsyncErrors(async (req, res, next) => {
-	if (!req.user) {
-		res.status(401).json({
-			message: "You must be logged in to see your boards",
-			success: false,
-		});
-		return;
-	}
-
-	const board = await Board.findById(req.params.id);
-
-	if (!board) {
-		res.status(401).json({
-			message: "Board couldn't found",
-			success: false,
-		});
-		return;
-	}
-
-	if (!board.members.includes(req.user._id)) {
-		res.status(401).json({
-			message: "You are not permitted to access this board",
-			success: false,
-		});
-		return;
-	}
+	const board = await checkPermit(req, res, next);
+	if (!board) return;
 
 	res.status(200).json({ board: board, success: true });
 });
@@ -74,31 +51,8 @@ exports.createBoard = catchAsyncErrors(async (req, res, next) => {
 });
 
 exports.getIdeas = catchAsyncErrors(async (req, res, next) => {
-	if (!req.user) {
-		res.status(401).json({
-			message: "You must be logged in to see your boards",
-			success: false,
-		});
-		return;
-	}
-
-	const board = await Board.findById(req.params.id);
-
-	if (!board) {
-		res.status(401).json({
-			message: "Board couldn't found",
-			success: false,
-		});
-		return;
-	}
-
-	if (!board.members.includes(req.user._id)) {
-		res.status(401).json({
-			message: "You are not permitted to access this board",
-			success: false,
-		});
-		return;
-	}
+	const board = await checkPermit(req, res, next);
+	if (!board) return;
 
 	const ideas = await Idea.find({ board: req.params.id });
 
@@ -108,31 +62,8 @@ exports.getIdeas = catchAsyncErrors(async (req, res, next) => {
 exports.addIdea = catchAsyncErrors(async (req, res, next) => {
 	const { title, description, estimatedTime } = req.body;
 
-	if (!req.user) {
-		res.status(401).json({
-			message: "You must be logged in to add ideas",
-			success: false,
-		});
-		return;
-	}
-
-	const board = await Board.findById(req.params.id);
-
-	if (!board) {
-		res.status(401).json({
-			message: "Board couldn't found",
-			success: false,
-		});
-		return;
-	}
-
-	if (!board.members.includes(req.user._id)) {
-		res.status(401).json({
-			message: "You are not permitted to access this board",
-			success: false,
-		});
-		return;
-	}
+	const board = await checkPermit(req, res, next);
+	if (!board) return;
 
 	const user = await User.findById(req.user._id);
 	const createdBy = user.firstName + " " + user.lastName;
@@ -154,31 +85,8 @@ exports.addIdea = catchAsyncErrors(async (req, res, next) => {
 exports.upvoteIdea = catchAsyncErrors(async (req, res, next) => {
 	const { ideaId } = req.body;
 
-	if (!req.user) {
-		res.status(401).json({
-			message: "You must be logged in to add ideas",
-			success: false,
-		});
-		return;
-	}
-
-	const board = await Board.findById(req.params.id);
-
-	if (!board) {
-		res.status(401).json({
-			message: "Board couldn't found",
-			success: false,
-		});
-		return;
-	}
-
-	if (!board.members.includes(req.user._id)) {
-		res.status(401).json({
-			message: "You are not permitted to access this board",
-			success: false,
-		});
-		return;
-	}
+	const board = await checkPermit(req, res, next);
+	if (!board) return;
 
 	const idea = await Idea.findById(ideaId);
 	if (idea.votes.includes(req.user._id)) {
@@ -204,12 +112,21 @@ exports.upvoteIdea = catchAsyncErrors(async (req, res, next) => {
 });
 
 exports.getTasks = catchAsyncErrors(async (req, res, next) => {
+	const board = await checkPermit(req, res, next);
+	if (!board) return;
+
+	const tasks = await Task.find({ board: req.params.id });
+
+	res.status(200).json({ board: board, tasks: tasks, success: true });
+});
+
+async function checkPermit(req, res, next) {
 	if (!req.user) {
 		res.status(401).json({
 			message: "You must be logged in to see your boards",
 			success: false,
 		});
-		return;
+		return null;
 	}
 
 	const board = await Board.findById(req.params.id);
@@ -219,7 +136,7 @@ exports.getTasks = catchAsyncErrors(async (req, res, next) => {
 			message: "Board couldn't found",
 			success: false,
 		});
-		return;
+		return null;
 	}
 
 	if (!board.members.includes(req.user._id)) {
@@ -227,10 +144,7 @@ exports.getTasks = catchAsyncErrors(async (req, res, next) => {
 			message: "You are not permitted to access this board",
 			success: false,
 		});
-		return;
+		return null;
 	}
-
-	const tasks = await Task.find({ board: req.params.id });
-
-	res.status(200).json({ board: board, tasks: tasks, success: true });
-});
+	return board;
+}

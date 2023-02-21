@@ -264,7 +264,7 @@ const Board = () => {
 		dispatch(getBoard(boardId));
 		dispatch(getIdeas({ id: boardId }));
 		dispatch(getTasks({ id: boardId }));
-	}, [dispatch]);
+	}, [dispatch, boardId]);
 
 	function toggleModal(e) {
 		setIsOpen(!isOpen);
@@ -280,7 +280,12 @@ const Board = () => {
 		const data = new FormData(e.currentTarget);
 
 		await dispatch(addIdea({ id: boardId, data: data }));
+		updateBoard();
+	};
+
+	const updateBoard = async () => {
 		dispatch(getIdeas({ id: boardId }));
+		dispatch(getTasks({ id: boardId }));
 	};
 
 	return (
@@ -315,13 +320,14 @@ const Board = () => {
 										<CardActions>
 											<Vote>
 												<CardButton
-													onClick={() => {
-														dispatch(
+													onClick={async () => {
+														await dispatch(
 															upvoteIdea({
 																id: boardId,
 																data: { ideaId: value._id },
 															})
 														);
+														updateBoard();
 													}}
 												>
 													{value.votes.includes(user._id) ? null : (
@@ -423,6 +429,11 @@ const Board = () => {
 				<h4>{card.title}</h4>
 				<p>{card.description}</p>
 				<p>{card.estimatedTime}</p>
+				{card.status && (
+					<Button type="submit" onClick={toggleModal} fullWidth>
+						Remove Card
+					</Button>
+				)}
 				<Button onClick={(e) => toggleCardModal(e, {})} fullWidth>
 					Done
 				</Button>
