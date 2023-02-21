@@ -49,7 +49,6 @@ const Card = styled(Link)`
 `;
 
 const Form = styled.form`
-	width: 100%;
 	display: flex;
 	justify-content: center;
 	margin: 2rem;
@@ -61,6 +60,7 @@ const TextInput = styled.input`
 	border: none;
 	border-radius: 1.2rem;
 	margin-right: 1rem;
+	padding: 1rem;
 	box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 `;
 

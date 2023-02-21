@@ -19,20 +19,6 @@ const boardSchema = new mongoose.Schema({
 			required: true,
 		},
 	],
-	ideas: [
-		{
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "Idea",
-			required: true,
-		},
-	],
-	tasks: [
-		{
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "Task",
-			required: true,
-		},
-	],
 	createdAt: {
 		type: Date,
 		default: Date.now,

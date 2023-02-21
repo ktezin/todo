@@ -76,9 +76,6 @@ exports.addIdea = catchAsyncErrors(async (req, res, next) => {
 		createdBy,
 	});
 
-	board.ideas.push(idea._id);
-	await board.save();
-
 	res.status(200).json({ board: board, idea: idea, success: true });
 });
 
