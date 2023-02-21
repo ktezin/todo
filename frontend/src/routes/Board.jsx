@@ -254,7 +254,8 @@ const Button = styled.button`
 const Board = () => {
 	const dispatch = useDispatch();
 
-	const { loading, board, ideas, todos, inProgress, finished } = useSelector(boardData);
+	const { loading, board, ideas, todos, inProgress, finished } =
+		useSelector(boardData);
 	const { user } = useSelector(userData);
 
 	const [isOpen, setIsOpen] = React.useState(false);
@@ -416,12 +417,11 @@ const Board = () => {
 										</CardContent>
 										<CardActions>
 											<CardButton
-												onClick={async () => {
-													toggleCardModal(e, {});
+												onClick={async (e) => {
 													await dispatch(
 														removeTask({
 															id: boardId,
-															data: { taskId: card._id },
+															data: { taskId: task._id },
 														})
 													);
 													updateBoard();
