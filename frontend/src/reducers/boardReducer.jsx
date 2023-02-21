@@ -134,6 +134,30 @@ export const getTasks = createAsyncThunk(
 	}
 );
 
+export const removeTask = createAsyncThunk(
+	"board/removeTask",
+	async (args, thunkAPI) => {
+		const config = {
+			headers: {
+				"Content-Type": "application/json",
+			},
+		};
+		try {
+			const response = await axios.put(
+				`/api/tasks/${args.id}`,
+				args.data,
+				config
+			);
+			if (response.status !== 200) {
+				return thunkAPI.rejectWithValue(response.status);
+			}
+			return thunkAPI.fulfillWithValue(response.data);
+		} catch (error) {
+			throw thunkAPI.rejectWithValue(error.response.data.message);
+		}
+	}
+);
+
 export const boardSlice = createSlice({
 	name: "board",
 	initialState,
@@ -211,9 +235,28 @@ export const boardSlice = createSlice({
 			.addCase(getTasks.fulfilled, (state, action) => {
 				state.loading = false;
 				state.board = action.payload.board;
-				state.todos = action.payload.tasks.filter((task) => task.status === "todo");
+				state.todos = action.payload.tasks.filter(
+					(task) => task.status === "todo"
+				);
+				state.inProgress = action.payload.tasks.filter(
+					(task) => task.status === "inProgress"
+				);
+				state.finished = action.payload.tasks.filter(
+					(task) => task.status === "finished"
+				);
 			})
 			.addCase(getTasks.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload;
+			})
+			.addCase(removeTask.pending, (state, action) => {
+				state.loading = false;
+			})
+			.addCase(removeTask.fulfilled, (state, action) => {
+				state.loading = false;
+				state.board = action.payload.board;
+			})
+			.addCase(removeTask.rejected, (state, action) => {
 				state.loading = false;
 				state.error = action.payload;
 			});

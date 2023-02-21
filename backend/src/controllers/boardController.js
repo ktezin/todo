@@ -89,6 +89,14 @@ exports.upvoteIdea = catchAsyncErrors(async (req, res, next) => {
 	if (!board) return;
 
 	const idea = await Idea.findById(ideaId);
+	if (!idea) {
+		res.status(401).json({
+			message: "Idea couldn't found",
+			success: false,
+		});
+		return;
+	}
+
 	if (idea.votes.includes(req.user._id)) {
 		const votes = idea.votes.filter((value) => value !== req.user._id);
 		console.log(idea.votes, votes);
@@ -118,6 +126,25 @@ exports.getTasks = catchAsyncErrors(async (req, res, next) => {
 	const tasks = await Task.find({ board: req.params.id });
 
 	res.status(200).json({ board: board, tasks: tasks, success: true });
+});
+
+exports.removeTask = catchAsyncErrors(async (req, res, next) => {
+	const { taskId } = req.body;
+
+	const board = await checkPermit(req, res, next);
+	if (!board) return;
+
+	const task = await Task.findById(taskId);
+	if (!task) {
+		res.status(401).json({
+			message: "Task couldn't found",
+			success: false,
+		});
+		return;
+	}
+	await task.delete();
+
+	res.status(200).json({ board: board, success: true });
 });
 
 async function checkPermit(req, res, next) {

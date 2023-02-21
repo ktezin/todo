@@ -12,6 +12,7 @@ import {
 	getBoard,
 	getIdeas,
 	getTasks,
+	removeTask,
 	upvoteIdea,
 } from "../reducers/boardReducer";
 import { userData } from "../reducers/userReducer";
@@ -284,6 +285,7 @@ const Board = () => {
 	};
 
 	const updateBoard = async () => {
+		console.log("test");
 		dispatch(getIdeas({ id: boardId }));
 		dispatch(getTasks({ id: boardId }));
 	};
@@ -430,7 +432,19 @@ const Board = () => {
 				<p>{card.description}</p>
 				<p>{card.estimatedTime}</p>
 				{card.status && (
-					<Button type="submit" onClick={toggleModal} fullWidth>
+					<Button
+						onClick={async (e) => {
+							toggleCardModal(e, {});
+							await dispatch(
+								removeTask({
+									id: boardId,
+									data: { taskId: card._id },
+								})
+							);
+							updateBoard();
+						}}
+						fullWidth
+					>
 						Remove Card
 					</Button>
 				)}
