@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import GlobalStyle from "../globalStyles";
 import { TbHome, TbLayoutDashboard, TbLogout, TbLogin } from "react-icons/tb";
 import { ModalProvider } from "styled-react-modal";
@@ -179,6 +181,7 @@ const Root = () => {
 					>
 						<Children>
 							{auth.isAuthenticated ? <Outlet /> : <Login />}
+							<ToastContainer autoClose={4000} />
 						</Children>
 					</motion.div>
 				</AnimatePresence>

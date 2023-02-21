@@ -19,6 +19,7 @@ import {
 import { userData } from "../reducers/userReducer";
 import { useDispatch, useSelector } from "react-redux";
 import FocusMode from "../components/FocusMode";
+import { toast } from "react-toastify";
 
 const Container = styled.div``;
 
@@ -296,8 +297,50 @@ const Board = () => {
 		e.preventDefault();
 		const data = new FormData(e.currentTarget);
 
-		await dispatch(addIdea({ id: boardId, data: data }));
+		const id = toast.loading("Creating idea");
+		const response = await dispatch(addIdea({ id: boardId, data: data }));
+		if (response.meta.requestStatus === "rejected") {
+			toast.update(id, {
+				render: "Idea could not be created",
+				type: "error",
+				isLoading: false,
+				autoClose: 4000,
+			});
+		} else {
+			toast.update(id, {
+				render: "Idea created",
+				type: "success",
+				isLoading: false,
+				autoClose: 2000,
+			});
+		}
+
 		updateBoard();
+	};
+
+	const handleRemoveTask = async (task) => {
+		const id = toast.loading("Removing task");
+		const response = await dispatch(
+			removeTask({
+				id: boardId,
+				data: { taskId: task._id },
+			})
+		);
+		if (response.meta.requestStatus === "rejected") {
+			toast.update(id, {
+				render: "Task could not be removed",
+				type: "error",
+				isLoading: false,
+				autoClose: 4000,
+			});
+		} else {
+			toast.update(id, {
+				render: "Task removed",
+				type: "success",
+				isLoading: false,
+				autoClose: 2000,
+			});
+		}
 	};
 
 	const updateBoard = async () => {
@@ -418,12 +461,7 @@ const Board = () => {
 										<CardActions>
 											<CardButton
 												onClick={async (e) => {
-													await dispatch(
-														removeTask({
-															id: boardId,
-															data: { taskId: task._id },
-														})
-													);
+													handleRemoveTask(card);
 													updateBoard();
 												}}
 											>
@@ -467,12 +505,7 @@ const Board = () => {
 					<Button
 						onClick={async (e) => {
 							toggleCardModal(e, {});
-							await dispatch(
-								removeTask({
-									id: boardId,
-									data: { taskId: card._id },
-								})
-							);
+							handleRemoveTask(card);
 							updateBoard();
 						}}
 						fullWidth
