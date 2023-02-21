@@ -21,14 +21,6 @@ const taskSchema = new mongoose.Schema({
 		required: [true, "Please specify status of this task"],
 		maxLength: [20, "Task status must be less than 20 characters"],
 	},
-	workingOn: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "User",
-	},
-	elapsedTime: {
-		type: Number,
-		default: 0,
-	},
 	board: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "Board",

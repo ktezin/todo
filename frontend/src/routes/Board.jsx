@@ -13,6 +13,7 @@ import {
 	getIdeas,
 	getTasks,
 	removeTask,
+	setTaskStatus,
 	upvoteIdea,
 } from "../reducers/boardReducer";
 import { userData } from "../reducers/userReducer";
@@ -250,12 +251,10 @@ const Button = styled.button`
 	}
 `;
 
-
-
 const Board = () => {
 	const dispatch = useDispatch();
 
-	const { loading, board, ideas, todos } = useSelector(boardData);
+	const { loading, board, ideas, todos, progress } = useSelector(boardData);
 	const { user } = useSelector(userData);
 
 	const [isOpen, setIsOpen] = React.useState(false);
@@ -279,6 +278,18 @@ const Board = () => {
 		setIsCardOpen(!isCardOpen);
 		setCard(value);
 	}
+
+	const handleFocusMode = async (task) => {
+		await dispatch(
+			setTaskStatus({
+				id: boardId,
+				data: { taskId: task._id, status: "inProgress" },
+			})
+		);
+		setCard(task);
+		setInFocusMode(true);
+		updateBoard();
+	};
 
 	const submitHandler = async (e) => {
 		e.preventDefault();
@@ -364,12 +375,7 @@ const Board = () => {
 											</CardOwner>
 										</CardContent>
 										<CardActions>
-											<CardButton
-												onClick={() => {
-													setCard(todo);
-													setInFocusMode(true);
-												}}
-											>
+											<CardButton onClick={() => handleFocusMode(todo)}>
 												<VscDebugStart size={20} />
 											</CardButton>
 										</CardActions>
@@ -378,20 +384,23 @@ const Board = () => {
 						</List>
 						<List>
 							<ListText>Progress</ListText>
-							<Card color="#FFBF00" onClick={toggleCardModal}>
-								<CardContent>
-									<CardText>Add x to the app</CardText>
-									<CardOwner>
-										Kağan T. working on it
-										<CardTimeText>2h and 12min elapsed</CardTimeText>
-									</CardOwner>
-								</CardContent>
-								<CardActions>
-									<CardButton>
-										<MdDoneOutline size={20} />
-									</CardButton>
-								</CardActions>
-							</Card>
+							{progress &&
+								progress.map((task, index) => (
+									<Card color="#FFBF00" key={index}>
+										<CardContent onClick={(e) => toggleCardModal(e, task)}>
+											<CardText>{task.title}</CardText>
+											<CardOwner>
+												{task.createdBy}
+												<CardTimeText>{task.estimatedTime}</CardTimeText>
+											</CardOwner>
+										</CardContent>
+										<CardActions>
+											<CardButton onClick={() => handleFocusMode(task)}>
+												<MdDoneOutline size={20} />
+											</CardButton>
+										</CardActions>
+									</Card>
+								))}
 						</List>
 						<List>
 							<ListText>Finished</ListText>
@@ -460,7 +469,13 @@ const Board = () => {
 					Done
 				</Button>
 			</StyledModal>
-			{inFocusMode && <FocusMode deadline={card.createdAt} inFocusMode={inFocusMode} setInFocusMode={setInFocusMode} />}
+			{inFocusMode && (
+				<FocusMode
+					deadline={card.createdAt}
+					inFocusMode={inFocusMode}
+					setInFocusMode={setInFocusMode}
+				/>
+			)}
 		</Container>
 	);
 };

@@ -147,6 +147,26 @@ exports.removeTask = catchAsyncErrors(async (req, res, next) => {
 	res.status(200).json({ board: board, success: true });
 });
 
+exports.setTaskStatus = catchAsyncErrors(async (req, res, next) => {
+	const { taskId, status } = req.body;
+
+	const board = await checkPermit(req, res, next);
+	if (!board) return;
+
+	const task = await Task.findById(taskId);
+	if (!task) {
+		res.status(401).json({
+			message: "Task couldn't found",
+			success: false,
+		});
+		return;
+	}
+	task.status = status;
+	await task.save();
+
+	res.status(200).json({ board: board, task: task, success: true });
+});
+
 async function checkPermit(req, res, next) {
 	if (!req.user) {
 		res.status(401).json({

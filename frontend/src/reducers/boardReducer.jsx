@@ -143,6 +143,30 @@ export const removeTask = createAsyncThunk(
 			},
 		};
 		try {
+			const response = await axios.post(
+				`/api/tasks/${args.id}`,
+				args.data,
+				config
+			);
+			if (response.status !== 200) {
+				return thunkAPI.rejectWithValue(response.status);
+			}
+			return thunkAPI.fulfillWithValue(response.data);
+		} catch (error) {
+			throw thunkAPI.rejectWithValue(error.response.data.message);
+		}
+	}
+);
+
+export const setTaskStatus = createAsyncThunk(
+	"board/setTaskStatus",
+	async (args, thunkAPI) => {
+		const config = {
+			headers: {
+				"Content-Type": "application/json",
+			},
+		};
+		try {
 			const response = await axios.put(
 				`/api/tasks/${args.id}`,
 				args.data,
@@ -257,6 +281,17 @@ export const boardSlice = createSlice({
 				state.board = action.payload.board;
 			})
 			.addCase(removeTask.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload;
+			})
+			.addCase(setTaskStatus.pending, (state, action) => {
+				state.loading = false;
+			})
+			.addCase(setTaskStatus.fulfilled, (state, action) => {
+				state.loading = false;
+				state.board = action.payload.board;
+			})
+			.addCase(setTaskStatus.rejected, (state, action) => {
 				state.loading = false;
 				state.error = action.payload;
 			});
