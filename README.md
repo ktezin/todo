@@ -10,6 +10,7 @@ npm run build
 Server Installation
 ```
 cd backend
+npm install
 npm start
 ```
 Open http://localhost:4000 to view it in the browser.
