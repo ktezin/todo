@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { FaGoogle } from "react-icons/fa";
+import { FaGoogle, FaGithub } from "react-icons/fa";
 
 const Container = styled.div`
 	height: 100vh;
@@ -24,6 +24,25 @@ const GoogleLogin = styled.a`
 	padding-left: 0.5rem;
 	text-decoration: none;
 	font-weight: 700;
+	height: 4rem;
+	width: 16rem;
+	margin-bottom: 0.2rem;
+`;
+
+const GitHubLogin = styled.a`
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: black;
+	color: white;
+	border: 1px solid lightgrey;
+	border-radius: 0.3rem;
+	padding-right: 0.5rem;
+	padding-left: 0.5rem;
+	text-decoration: none;
+	font-weight: 700;
+	height: 4rem;
+	width: 16rem;
 `;
 
 const Login = () => {
@@ -34,6 +53,10 @@ const Login = () => {
 				<FaGoogle style={{ marginRight: "0.2rem" }} size={"20"} />
 				<p>Login via Google</p>
 			</GoogleLogin>
+			<GitHubLogin href="/api/auth/github">
+				<FaGithub style={{ marginRight: "0.2rem" }} size={"20"} />
+				<p>Login via Github</p>
+			</GitHubLogin>
 		</Container>
 	);
 };
