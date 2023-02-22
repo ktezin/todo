@@ -17,6 +17,10 @@ exports.logout = catchAsyncErrors(async (req, res, next) => {
 		if (err) {
 			return next(err);
 		}
-		res.redirect("http://localhost:5173");
+		res.redirect(
+			process.env.NODE_ENV === "PRODUCTION"
+				? "http://localhost:" + process.env.PORT
+				: "http://localhost:5173"
+		);
 	});
 });

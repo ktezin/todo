@@ -12,8 +12,14 @@ router
 
 router.route("/auth/google/callback").get(
 	passport.authenticate("google", {
-		successRedirect: "http://localhost:5173",
-		failureRedirect: "http://localhost:5173/login",
+		successRedirect:
+			process.env.NODE_ENV === "PRODUCTION"
+				? "http://localhost:" + process.env.PORT
+				: "http://localhost:5173",
+		failureRedirect:
+			process.env.NODE_ENV === "PRODUCTION"
+				? "http://localhost:" + process.env.PORT + "/login"
+				: "http://localhost:5173/login",
 	})
 );
 

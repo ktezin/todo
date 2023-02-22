@@ -143,7 +143,7 @@ const Root = () => {
 							<ItemContainer>
 								<ItemWrapper to="/">
 									<TbHome />
-									<ItemText>Homepage</ItemText>
+									<ItemText>Home</ItemText>
 								</ItemWrapper>
 							</ItemContainer>
 							<ItemContainer>
