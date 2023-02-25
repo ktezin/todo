@@ -20,10 +20,10 @@ const userSchema = new mongoose.Schema({
 	},
 	email: {
 		type: String,
-		required: [true, "Please enter your last name"],
+		required: [true, "Please enter email"],
 		trim: true,
-		maxLength: [32, "Your last name must be less than 32 characters"],
-		validate: [validator.isEmail, "Lütfen geçerli bir e-posta adresi girin"],
+		maxLength: [64, "Your email must be less than 32 characters"],
+		validate: [validator.isEmail, "Please enter a valid email"],
 	},
 	profilePhoto: {
 		type: String,

@@ -56,6 +56,22 @@ export const createBoard = createAsyncThunk(
 	}
 );
 
+export const getMembers = createAsyncThunk(
+	"board/getMembers",
+	async (args, thunkAPI) => {
+		try {
+			const response = await axios.get(`/api/members/${args.id}`);
+			if (response.status !== 200) {
+				return thunkAPI.rejectWithValue(response.status);
+			}
+			return thunkAPI.fulfillWithValue(response.data.members);
+		} catch (error) {
+			throw thunkAPI.rejectWithValue(error.response.data.message);
+		}
+	}
+);
+
+
 export const getIdeas = createAsyncThunk(
 	"board/getIdeas",
 	async (args, thunkAPI) => {
@@ -217,6 +233,17 @@ export const boardSlice = createSlice({
 				state.board = action.payload;
 			})
 			.addCase(createBoard.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload;
+			})
+			.addCase(getMembers.pending, (state, action) => {
+				state.loading = false;
+			})
+			.addCase(getMembers.fulfilled, (state, action) => {
+				state.loading = false;
+				state.members = action.payload;
+			})
+			.addCase(getMembers.rejected, (state, action) => {
 				state.loading = false;
 				state.error = action.payload;
 			})

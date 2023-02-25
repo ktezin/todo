@@ -11,6 +11,7 @@ import {
 	boardData,
 	getBoard,
 	getIdeas,
+	getMembers,
 	getTasks,
 	removeTask,
 	setTaskStatus,
@@ -59,15 +60,30 @@ const MembersText = styled.h5`
 `;
 
 const MemberButton = styled.button`
-	background-color: white;
-	border-radius: 1rem;
-	border: none;
-	padding: 1rem;
-	margin-right: 0.3rem;
-	height: 100%;
+	position: relative;
+	background-image: url(${(props) => props.img});
+	background-size: cover;
+	vertical-align: middle;
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
 	background-color: #0095ff;
+`;
+
+const MemberOverlay = styled.div`
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+	opacity: 0;
+	transition: 0.5s ease;
+	background-color: rgba(255, 255, 255, 0.4);
 	&:hover {
-		background-color: #07c;
+		opacity: 1;
 	}
 `;
 
@@ -255,7 +271,7 @@ const Button = styled.button`
 const Board = () => {
 	const dispatch = useDispatch();
 
-	const { loading, board, ideas, todos, inProgress, finished } =
+	const { loading, board, ideas, todos, inProgress, finished, members } =
 		useSelector(boardData);
 	const { user } = useSelector(userData);
 
@@ -270,6 +286,7 @@ const Board = () => {
 		dispatch(getBoard(boardId));
 		dispatch(getIdeas({ id: boardId }));
 		dispatch(getTasks({ id: boardId }));
+		dispatch(getMembers({ id: boardId }));
 	}, [dispatch, boardId]);
 
 	function toggleModal(e) {
@@ -358,9 +375,11 @@ const Board = () => {
 						<HeaderText>{board.name && board.name}</HeaderText>
 						<Members>
 							<MembersText>Members: </MembersText>
-							{board.members &&
-								board.members.map((value, index) => (
-									<MemberButton key={index}>{value}</MemberButton>
+							{members &&
+								members.map((value, index) => (
+									<MemberButton key={index} img={value.profilePhoto}>
+										<MemberOverlay>{value.firstName}</MemberOverlay>
+									</MemberButton>
 								))}
 						</Members>
 					</Header>

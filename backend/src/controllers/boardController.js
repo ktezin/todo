@@ -50,6 +50,22 @@ exports.createBoard = catchAsyncErrors(async (req, res, next) => {
 	res.status(200).json({ board: board, success: true });
 });
 
+exports.getMembers = catchAsyncErrors(async (req, res, next) => {
+	const board = await checkPermit(req, res, next);
+	if (!board) return;
+
+	const members = [];
+	for (let i = 0; i < board.members.length; i++) {
+		const user = await User.findById(board.members[i]);
+		members.push(user);
+	}
+
+	res.status(200).json({
+		members: members,
+		success: true,
+	});
+});
+
 exports.getIdeas = catchAsyncErrors(async (req, res, next) => {
 	const board = await checkPermit(req, res, next);
 	if (!board) return;

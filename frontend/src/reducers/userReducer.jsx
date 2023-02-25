@@ -29,6 +29,18 @@ export const logout = createAsyncThunk("user/logout", async () => {
 	}
 });
 
+export const getUser = createAsyncThunk("user/get", async (args, thunkAPI) => {
+	try {
+		const response = await axios.get(`/api/user/${args.id}`);
+		if (response.status !== 200) {
+			return thunkAPI.rejectWithValue(response.status);
+		}
+		return thunkAPI.fulfillWithValue(response.data);
+	} catch (error) {
+		throw thunkAPI.rejectWithValue(error.response.data.message);
+	}
+});
+
 export const userSlice = createSlice({
 	name: "user",
 	initialState,
@@ -61,6 +73,20 @@ export const userSlice = createSlice({
 				state.loading = false;
 				state.isAuthenticated = false;
 				state.user = null;
+				state.error = action.payload;
+			})
+			.addCase(getUser.pending, (state, action) => {
+				state.loading = false;
+			})
+			.addCase(getUser.fulfilled, (state, action) => {
+				state.loading = false;
+				state.firstName = action.payload.firstName;
+				state.lastName = action.payload.firstlastNameame;
+				state.email = action.payload.email;
+				state.profilePhoto = action.payload.profilePhoto;
+			})
+			.addCase(getUser.rejected, (state, action) => {
+				state.loading = false;
 				state.error = action.payload;
 			});
 	},

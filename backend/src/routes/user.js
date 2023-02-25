@@ -1,10 +1,11 @@
 const express = require("express");
 const passport = require("passport");
-const { login, logout } = require("../controllers/userController");
+const { login, logout, getUser } = require("../controllers/userController");
 const router = express.Router();
 
 router.route("/login").get(login);
 router.route("/logout").get(logout);
+router.route("/user/:id").get(getUser);
 
 router
 	.route("/auth/github/")
